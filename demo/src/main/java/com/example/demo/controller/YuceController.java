@@ -5,35 +5,27 @@ import com.example.demo.common.Result;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-
-
-import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.util.HashMap;
 import java.util.Map;
 
-
 @RestController
-@RequestMapping("/wenshu")
+@RequestMapping("/yuce")
 
-public class WenShuController {
 
+public class YuceController {
 
     @PostMapping("/upload")
     public Result handleFileUpload(@RequestParam("file") MultipartFile file) {
@@ -44,39 +36,8 @@ public class WenShuController {
 
         try {
             String textContent = extractTextFromFile(file);
-
-            // 构建请求
-
-
-            //textContent="现在，你作为法律专家，请你给出该法律文书的摘要:\n"+textContent;
-
-
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> data = new HashMap<>();
-            data.put("document", textContent);
-
-            String jsonBody = mapper.writeValueAsString(data);
-
-
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:7860/summarize"))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                    .build();
-
-            // 发送请求并处理响应
-
-            HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> response = client.send(
-                    request, HttpResponse.BodyHandlers.ofString());
-
-            System.out.println("Status code: " + response.statusCode());
-
-            System.out.println("Response body: " + response.body());
-
-            //返回结果
-            return Result.success(response.body());
-
+            System.out.println(textContent);
+                return Result.success(textContent);
 
         } catch (UnsupportedOperationException e) {
 
@@ -86,6 +47,61 @@ public class WenShuController {
             return Result.error("文件解析失败");
         }
     }
+
+
+    @PostMapping("/send")
+    public Result handleRequest(@RequestBody String requestData) {
+        System.out.println("接收到的字符串: " + requestData);
+        // 构建请求
+        try {
+            
+        //requestData="现在，你作为法律专家，根据上述案件信息,给出法律预测报告,如罚款金额,刑期时长等:\n"+requestData+"@";
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> data = new HashMap<>();
+        data.put("fact", requestData);
+
+        String jsonBody = mapper.writeValueAsString(data);
+
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:7860/prediction"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                .build();
+
+        // 发送请求并处理响应
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse<String> response = client.send(
+                request, HttpResponse.BodyHandlers.ofString());
+
+        System.out.println("Status code: " + response.statusCode());
+
+
+
+            //返回结果
+        return Result.success(response.body());
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("错误");
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     private String extractTextFromFile(MultipartFile file) throws Exception {
         String filename = file.getOriginalFilename();
@@ -127,6 +143,8 @@ public class WenShuController {
         }
     }
 }
+
+
 
 
 

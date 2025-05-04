@@ -46,15 +46,6 @@
     </div>
 
     <div class="input-area">
-      <!--      <textarea
-              v-model="userInput"
-              placeholder="输入您的问题..."
-              rows="1"
-              @input="adjustTextareaHeight"
-              @keypress.enter.exact.prevent="sendMessage"
-            ></textarea>
-      -->
-
 
       <div
           style="margin-left: 500px"
@@ -201,13 +192,6 @@ export default {
       }
     },
 
-
-    /*addMessage(message) {
-      this.messages.push(message);
-      this.$nextTick(() => {
-        this.scrollToBottom();
-      });
-    },*/
     addMessage(message) {
       if (message.type === 'text') {
         message.content = message.content.replace(/\n/g, '<br/>');

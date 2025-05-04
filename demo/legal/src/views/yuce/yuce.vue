@@ -16,12 +16,13 @@
                 </div>
               </div>
               <div class="answer-content">
-                {{ item.answer }}
+                <div  v-html="item.answer"></div>
+
                 <div class="keywords">
                   <span
-                    class="keyword-tag"
-                    v-for="(word, wIndex) in item.keywords"
-                    :key="wIndex"
+                      class="keyword-tag"
+                      v-for="(word, wIndex) in item.keywords"
+                      :key="wIndex"
                   >
                     #{{ word }}
                   </span>
@@ -35,32 +36,52 @@
                 <span class="user-icon">👤 我的提问</span>
                 <span class="time">{{ item.time }}</span>
               </div>
-              <div class="question-content">{{ item.question }}</div>
+
+              <div class="question-content" v-html="item.question"></div>
             </div>
           </div>
         </div>
 
         <!-- 输入区域 -->
+
         <div class="input-area">
           <textarea
-            v-model="inputQuestion"
-            placeholder="输入您的问题..."
-            @keydown.enter.exact.prevent="submitQuestion"
-          ></textarea>
+              v-model="inputQuestion"
+              placeholder="输入您的问题..."
+              @keydown.enter.exact.prevent="submitQuestion">
+          </textarea>
+
+          <el-upload
+              class="upload-demo"
+              drag
+              action="http://localhost:9090/yuce/upload"
+              auto-upload
+              :show-file-list="false"
+              :on-success="handleUploadSuccess"
+              :on-error="handleUploadError"
+          >
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em>,提取文字</div>
+          </el-upload>
+
           <button
-            class="submit-btn"
-            @click="submitQuestion"
-            :disabled="isLoading"
+              class="submit-btn"
+              @click="submitQuestion"
+              :disabled="isLoading"
           >
             {{ isLoading ? "思考中..." : "发送问题" }}
           </button>
         </div>
+
+
       </div>
     </div>
   </div>
 </template>
 
 <script>
+
+import request from "@/axios/request";
 import jsPDF from "jspdf";
 
 export default {
@@ -70,20 +91,46 @@ export default {
       inputQuestion: "",
       history: [],
       isLoading: false,
+
       // 模拟数据
       mockResponse: {
         answer:
-          "Vue.js 是一个渐进式框架，建议学习路线：\n1. 基础语法\n2. 组件开发\n3. Vue Router\n4. 状态管理",
+            "Vue.js 是一个渐进式框架，建议学习路线：\n1. 基础语法\n2. 组件开发\n3. Vue Router\n4. 状态管理",
         keywords: ["Vue", "学习路线", "前端"],
         timestamp: new Date().toLocaleString(),
       },
     };
   },
+  computed: {
+    totalFileSize() {
+      const totalBytes = this.files.reduce((sum, file) => sum + file.size, 0);
+      return this.formatFileSize(totalBytes);
+    },
+
+
+  },
+
+
   methods: {
+    //将返回的json处理成正常字段
+
+
+    //发送信息
     async submitQuestion() {
       if (!this.inputQuestion.trim() || this.isLoading) return;
-
       this.isLoading = true;
+
+
+      //格式化回答
+      function formattedPrediction(msg) {
+
+        const parsed = JSON.parse(msg);
+        return parsed.prediction.replace(/\n/g, '<br/>');
+      }
+
+
+
+
 
       // 添加用户问题
       const newQ = {
@@ -94,23 +141,40 @@ export default {
         timestamp: "",
       };
 
-      this.history.push(newQ);
-
       try {
-        // 模拟API请求
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // 向后端发送请求
+        const response = await request.post('/yuce/send', this.inputQuestion);
+        console.log(response)
+
+
+
+        if (response.code == 200) {
+          const newQ = {
+            question: this.inputQuestion,
+            time: new Date().toLocaleTimeString(),
+            answer: formattedPrediction(response.msg),
+            keywords: [],
+            timestamp: "",
+          };
+          this.history.push(newQ);
+        }
+
 
         // 更新回答数据
-        const answerItem = {
+        /*const answerItem = {
           ...this.mockResponse,
           timestamp: new Date().toLocaleString(),
-        };
+        };*/
 
-        this.history = this.history.map((item) => {
+
+
+
+
+        /*this.history = this.history.map((item) => {
           return item.question === newQ.question
-            ? { ...item, ...answerItem }
-            : item;
-        });
+              ? {...item, ...answerItem}
+              : item;
+        });*/
       } finally {
         this.isLoading = false;
         this.inputQuestion = "";
@@ -146,6 +210,27 @@ export default {
 
       doc.save(`AI问答报告_${new Date().getTime()}.pdf`);
     },
+
+
+    // 处理文件上传成功的事件
+    handleUploadSuccess(response, files, fileList) {
+      console.log("文件上传成功，后端响应:", response);
+      if (response.code == 200) {
+        this.inputQuestion = response.msg
+      } else {
+        this.$message({type: 'error', message: response.msg})
+      }
+
+
+    },
+
+    // 处理文件上传失败的事件
+    handleUploadError(err, file, fileList) {
+      console.error("文件上传失败:", err);
+      this.$message.error("文件上传失败，请重试！");
+    },
+
+
   },
 };
 </script>
@@ -260,14 +345,19 @@ export default {
   font-size: 0.85em;
 }
 
+
 .input-area {
   position: relative;
   margin-top: 30px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /* 水平分布，元素之间的间距自动调整 */
+  align-items: flex-end; /* 垂直对齐到底部 */
 }
 
 textarea {
-  width: 97%;
-  height: 120px;
+  width: 56%; /* 设置textarea的宽度为容器的45% */
+  height: 142px;
   padding: 20px;
   border: 2px solid #cbd5e1;
   border-radius: 12px;
@@ -281,12 +371,16 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+.el-upload {
+  width: 45%; /* 设置上传组件的宽度为容器的45% */
+  display: flex;
+  justify-content: center;
+}
+
 .submit-btn {
-  position: absolute;
-  right: 15px;
-  bottom: 15px;
   background: #3b82f6;
   color: white;
+  margin-bottom: 60px;
   padding: 12px 30px;
   border: none;
   border-radius: 8px;
@@ -299,6 +393,7 @@ textarea:focus {
   background: #94a3b8;
   cursor: not-allowed;
 }
+
 
 .export-btn {
   background: #10b981;
@@ -328,4 +423,6 @@ textarea:focus {
     padding: 10px;
   }
 }
+
+
 </style>
