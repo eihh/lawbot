@@ -40,6 +40,11 @@
 </template>
 
 <script>
+
+
+import request from "@/axios/request";
+
+
 export default {
   name:"AbA",
   data() {
@@ -64,6 +69,13 @@ export default {
         isAi: false
       }
       this.messages.push(userMessage)
+
+      const response = await request.post('/wenda/send', {
+        id: userMessage.id,
+        content: userMessage.content
+      })
+      console.log(response)
+
       
       this.userInput = ''
       this.isSending = true
@@ -72,11 +84,19 @@ export default {
       await this.mockApiCall()
       
       // 添加AI回复
-      const aiResponse = {
+      /*const aiResponse = {
         id: this.messageId++,
         content: `关于 "${userMessage.content}" 的回复示例...`,
         isAi: true
+      }*/
+      const aiResponse = {
+        id: this.messageId++,
+        content: response.msg,
+        isAi: true
       }
+
+
+
       this.messages.push(aiResponse)
       
       this.isSending = false
@@ -185,6 +205,7 @@ export default {
 }
 
 .input-area {
+  height: 100px;
   padding: 20px;
   background: white;
   border-top: 1px solid #e5e7eb;
@@ -201,6 +222,7 @@ export default {
   outline: none;
   font-size: 15px;
   transition: all 0.3s;
+
 }
 
 .message-input:focus {

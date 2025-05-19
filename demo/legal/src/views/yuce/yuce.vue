@@ -5,6 +5,16 @@
         <!-- 问答历史区域 -->
         <div class="qa-history">
           <div v-for="(item, index) in history" :key="index" class="qa-item">
+
+            <!-- 用户问题（右侧） -->
+            <div class="user-question">
+              <div class="question-header">
+                <span class="user-icon">👤 我的提问</span>
+                <span class="time">{{ item.time }}</span>
+              </div>
+
+              <div class="question-content" v-html="item.question"></div>
+            </div>
             <!-- AI回答（左侧） -->
             <div class="ai-answer">
               <div class="answer-header">
@@ -30,15 +40,6 @@
               </div>
             </div>
 
-            <!-- 用户问题（右侧） -->
-            <div class="user-question">
-              <div class="question-header">
-                <span class="user-icon">👤 我的提问</span>
-                <span class="time">{{ item.time }}</span>
-              </div>
-
-              <div class="question-content" v-html="item.question"></div>
-            </div>
           </div>
         </div>
 
@@ -84,6 +85,8 @@
 import request from "@/axios/request";
 import jsPDF from "jspdf";
 
+
+
 export default {
   name: "AbA",
   data() {
@@ -112,7 +115,7 @@ export default {
 
 
   methods: {
-    //将返回的json处理成正常字段
+
 
 
     //发送信息
@@ -140,6 +143,8 @@ export default {
         keywords: [],
         timestamp: "",
       };
+
+
 
       try {
         // 向后端发送请求
@@ -182,7 +187,11 @@ export default {
     },
 
     exportSingleAnswer(item) {
+
       const doc = new jsPDF();
+
+
+      doc.setFont("msyh"); // 微软雅黑或其他支持中文的字体
 
       // 设置文档样式
       doc.setFontSize(18);
@@ -207,6 +216,7 @@ export default {
       doc.setTextColor(100);
       doc.text(`生成时间：${item.timestamp}`, 20, 140);
       doc.text(`关键词：${item.keywords.join(", ")}`, 20, 145);
+
 
       doc.save(`AI问答报告_${new Date().getTime()}.pdf`);
     },

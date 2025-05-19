@@ -54,7 +54,7 @@ public class YuceController {
         System.out.println("接收到的字符串: " + requestData);
         // 构建请求
         try {
-            
+
         //requestData="现在，你作为法律专家，根据上述案件信息,给出法律预测报告,如罚款金额,刑期时长等:\n"+requestData+"@";
 
 
@@ -78,6 +78,7 @@ public class YuceController {
                 request, HttpResponse.BodyHandlers.ofString());
 
         System.out.println("Status code: " + response.statusCode());
+        System.out.println("Response body: " + response.body());
 
 
 

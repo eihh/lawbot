@@ -112,19 +112,6 @@ export default {
   },
 
   methods: {
-    adjustTextareaHeight(event) {
-      const textarea = event.target;
-      textarea.style.height = "auto";
-      textarea.style.height =
-          (textarea.scrollHeight > 120 ? 120 : textarea.scrollHeight) + "px";
-    },
-
-    handleChange(event) {
-      this.files = Array.from(event.target.files);
-
-    },
-
-
     async uploadFile(file) {
       const formData = new FormData();
       formData.append("file", file);

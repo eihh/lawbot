@@ -46,11 +46,6 @@ public class WenShuController {
             String textContent = extractTextFromFile(file);
 
             // 构建请求
-
-
-            //textContent="现在，你作为法律专家，请你给出该法律文书的摘要:\n"+textContent;
-
-
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> data = new HashMap<>();
             data.put("document", textContent);
