@@ -45,32 +45,34 @@ public class WenShuController {
         try {
             String textContent = extractTextFromFile(file);
 
+            return Result.success(textContent);
+
             // 构建请求
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> data = new HashMap<>();
-            data.put("document", textContent);
-
-            String jsonBody = mapper.writeValueAsString(data);
-
-
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:7860/summarize"))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                    .build();
-
-            // 发送请求并处理响应
-
-            HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> response = client.send(
-                    request, HttpResponse.BodyHandlers.ofString());
-
-            System.out.println("Status code: " + response.statusCode());
-
-            System.out.println("Response body: " + response.body());
-
-            //返回结果
-            return Result.success(response.body());
+//            ObjectMapper mapper = new ObjectMapper();
+//            Map<String, Object> data = new HashMap<>();
+//            data.put("document", textContent);
+//
+//            String jsonBody = mapper.writeValueAsString(data);
+//
+//
+//            HttpRequest request = HttpRequest.newBuilder()
+//                    .uri(URI.create("http://localhost:7860/summarize"))
+//                    .header("Content-Type", "application/json")
+//                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+//                    .build();
+//
+//            // 发送请求并处理响应
+//
+//            HttpClient client = HttpClient.newHttpClient();
+//            HttpResponse<String> response = client.send(
+//                    request, HttpResponse.BodyHandlers.ofString());
+//
+//            System.out.println("Status code: " + response.statusCode());
+//
+//            System.out.println("Response body: " + response.body());
+//
+//            //返回结果
+//            return Result.success(response.body());
 
 
         } catch (UnsupportedOperationException e) {

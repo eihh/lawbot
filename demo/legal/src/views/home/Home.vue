@@ -107,11 +107,13 @@
               text-overflow: ellipsis;
             "
           >
-            <span style="color: #cbdcf7">a</span>
-            <span style="color: #b7e1e4">i</span>
-            <span style="color: #b7e1e4">问</span>
-            <span style="color: #b7e1e4">答</span>
-            <span style="color: #e9d4ff">系</span>
+            <span style="color: #cbdcf7">A</span>
+            <span style="color: #b7e1e4">I</span>
+            <span style="color: #b7e1e4">法</span>
+            <span style="color: #b7e1e4">律</span>
+            <span style="color: #e9d4ff">文</span>
+            <span style="color: #ffe0e6">书</span>
+            <span style="color: #ffe0e6">系</span>
             <span style="color: #ffe0e6">统</span>
           </div>
           <div

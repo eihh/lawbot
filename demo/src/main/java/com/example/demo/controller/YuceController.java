@@ -52,45 +52,47 @@ public class YuceController {
     @PostMapping("/send")
     public Result handleRequest(@RequestBody String requestData) {
         System.out.println("接收到的字符串: " + requestData);
-        // 构建请求
-        try {
 
-        //requestData="现在，你作为法律专家，根据上述案件信息,给出法律预测报告,如罚款金额,刑期时长等:\n"+requestData+"@";
+        return Result.success(requestData);
+
+//        // 构建请求
+//        try {
+//        ObjectMapper mapper = new ObjectMapper();
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("fact", requestData);
+//
+//        String jsonBody = mapper.writeValueAsString(data);
+//
+//
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(URI.create("http://localhost:7860/prediction"))
+//                .header("Content-Type", "application/json")
+//                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+//                .build();
+//
+//        // 发送请求并处理响应
+//
+//        HttpClient client = HttpClient.newHttpClient();
+//        HttpResponse<String> response = client.send(
+//                request, HttpResponse.BodyHandlers.ofString());
+//
+//        System.out.println("Status code: " + response.statusCode());
+//        System.out.println("Response body: " + response.body());
+//
+//
+//
+//            //返回结果
+//        return Result.success(response.body());
+//
+//
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return Result.error("错误");
+//        }
 
 
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> data = new HashMap<>();
-        data.put("fact", requestData);
 
-        String jsonBody = mapper.writeValueAsString(data);
-
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:7860/prediction"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                .build();
-
-        // 发送请求并处理响应
-
-        HttpClient client = HttpClient.newHttpClient();
-        HttpResponse<String> response = client.send(
-                request, HttpResponse.BodyHandlers.ofString());
-
-        System.out.println("Status code: " + response.statusCode());
-        System.out.println("Response body: " + response.body());
-
-
-
-            //返回结果
-        return Result.success(response.body());
-
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.error("错误");
-        }
     }
 
 

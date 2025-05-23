@@ -1,7 +1,10 @@
 <template>
   <div class="ai-assistant">
     <header>
-      <h1>法律文书摘要助手</h1>
+      <div class="header-content">
+        <h1>法律文书摘要助手</h1>
+        <p class="subtitle">AI-powered Legal Document Summarization</p>
+      </div>
     </header>
 
     <div class="chat-container" ref="chatContainer">
@@ -10,73 +13,97 @@
           :key="index"
           :class="['message', `${message.sender}-message`]"
       >
+        <div class="message-content">
+          <template v-if="message.type === 'text'">
+            <div v-html="message.content"></div>
+          </template>
 
-        <template v-if="message.type === 'text'">
-          <div v-html="message.content"></div>
-        </template>
+          <template v-else-if="message.type === 'file'">
+            <div class="file-card">
+              <div class="file-icon">{{ fileIcon(message.file) }}</div>
+              <div class="file-info">
+                <div class="file-name">{{ message.file.name }}</div>
+                <div class="file-size">{{ formatFileSize(message.file.size) }}</div>
+              </div>
 
-        <template v-else-if="message.type === 'file'">
-          <div class="file-card">
-            <div class="file-icon">{{ fileIcon(message.file) }}</div>
-            <div class="file-name">{{ message.file.name }}</div>
-            <div class="file-size">{{ formatFileSize(message.file.size) }}</div>
+              <img
+                  v-if="isImage(message.file)"
+                  :src="message.preview"
+                  class="image-preview"
+                  @click="openImage(message.preview)"
+              />
 
-            <img
-                v-if="isImage(message.file)"
-                :src="message.preview"
-                class="image-preview"
-                @click="openImage(message.preview)"
-            />
+              <div class="file-actions">
+                <a
+                    class="download-btn"
+                    :href="message.url"
+                    download
+                    target="_blank"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  下载
+                </a>
+              </div>
+            </div>
+          </template>
 
-            <a
-                class="download-btn"
-                :href="message.url"
-                download
-                target="_blank"
-            >
-              下载文件
-            </a>
-          </div>
-        </template>
-
-        <span v-if="message.typing" class="typing-indicator">
-          <span></span><span></span><span></span>
-        </span>
+          <span v-if="message.typing" class="typing-indicator">
+            <span></span><span></span><span></span>
+          </span>
+        </div>
+        <div class="message-time">{{ formatMessageTime() }}</div>
       </div>
     </div>
 
     <div class="input-area">
-
-      <div
-          style="margin-left: 500px"
-
-          class="drop-zone"
-          @dragover.prevent
-          @drop.prevent="handleDrop"
-      >
-        拖拽文件到这里，或点击 📎 选择文件
+      <div class="file-upload-container">
+        <div
+            class="drop-zone"
+            @dragover.prevent
+            @drop.prevent="handleDrop"
+            @click="triggerFileInput"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4a6fa5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <p>拖拽文件到这里或点击上传</p>
+          <p class="hint">支持PDF、Word、TXT等文档格式</p>
+        </div>
+        
+        <input
+            type="file"
+            id="fileUpload"
+            class="file-input"
+            multiple
+            @change="handleFileChange"
+        />
       </div>
 
-      <!-- 文件选择按钮 -->
-      <label for="fileUpload" class="file-label" title="上传文件"> 📎 </label>
-      <input
-          type="file"
-          id="fileUpload"
-          class="file-input"
-          multiple
-          @change="handleFileChange"
-      />
-
-
-      <span class="file-info" v-if="files.length > 0">
-        {{ files.length }}个文件 ({{ totalFileSize }})
-      </span>
-
-
-      <!-- 手动触发上传按钮 -->
-      <button class="send-btn" @click="sendMessage" title="发送">↑</button>
-
-
+      <div class="selected-files" v-if="files.length > 0">
+        <div class="file-badge" v-for="(file, index) in files" :key="index">
+          <span class="file-icon">{{ fileIcon(file) }}</span>
+          <span class="file-name">{{ file.name }}</span>
+          <span class="file-size">{{ formatFileSize(file.size) }}</span>
+          <button class="remove-file" @click="removeFile(index)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <button class="send-btn" @click="sendMessage">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -90,13 +117,11 @@ export default {
     return {
       userInput: "",
       files: [],
-
       messages: [
         {
           sender: "ai",
           type: "text",
-          content:
-              "您好！我是AI助手，请问有什么可以帮您的吗？您可以发送文字或上传文件。",
+          content: "您好！我是AI助手，专门处理法律文书摘要。您可以上传法律文书文件，我将为您提取关键信息并生成摘要。",
         },
       ],
       isTyping: false,
@@ -107,54 +132,61 @@ export default {
       const totalBytes = this.files.reduce((sum, file) => sum + file.size, 0);
       return this.formatFileSize(totalBytes);
     },
-
-
   },
-
   methods: {
+    triggerFileInput() {
+      document.getElementById('fileUpload').click();
+    },
+    
+    removeFile(index) {
+      this.files.splice(index, 1);
+    },
+    
     async uploadFile(file) {
       const formData = new FormData();
       formData.append("file", file);
 
-
-      //将返回的json处理成正常字段
       function formattedSummary(msg) {
         const parsed = JSON.parse(msg);
         return parsed.summary.replace(/\n/g, '<br/>');
       }
 
       try {
+        this.addMessage({
+          sender: "ai",
+          type: "text",
+          content: "正在分析您上传的法律文书，请稍候...",
+        });
+
         const response = await request.post("/wenshu/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
-          },
-          onUploadProgress: (progressEvent) => {
-
           },
         });
 
         console.log("文件上传成功：", response);
 
-        // 添加用户文本消息
-
         this.addMessage({
           sender: "ai",
           type: "text",
-          content: formattedSummary(response.msg),
+          // content: `<strong>文书摘要：</strong><br/>${formattedSummary(response.msg)}`,
+          content: `<strong>文书摘要：</strong><br/>${response.msg}`,
         });
-
 
       } catch (error) {
         console.error("文件上传失败：", error);
+        this.addMessage({
+          sender: "ai",
+          type: "text",
+          content: "抱歉，处理文件时出现错误。请确保上传的是有效的法律文书文件并重试。",
+        });
       }
     },
-
 
     async sendMessage() {
       const message = this.userInput.trim();
 
       if (message || this.files.length > 0) {
-        // 添加用户文本消息
         if (message) {
           this.addMessage({
             sender: "user",
@@ -163,19 +195,14 @@ export default {
           });
         }
 
-        // 添加用户文件消息 + 发送到后端
         for (const file of this.files) {
           this.addFileMessage(file);
-          await this.uploadFile(file); //  添加上传逻辑
+          await this.uploadFile(file);
         }
 
-        // 清空输入
         this.userInput = "";
         this.files = [];
         document.getElementById("fileUpload").value = "";
-
-        // 模拟AI回复
-        this.simulateAIResponse();
       }
     },
 
@@ -213,39 +240,9 @@ export default {
       });
     },
 
-    simulateAIResponse() {
-      // 显示"正在输入"指示器
-      this.isTyping = true;
-      this.addMessage({
-        sender: "ai",
-        type: "text",
-        content: "",
-        typing: true,
-      });
-
-      // 模拟AI思考时间
-      setTimeout(() => {
-        // 移除"正在输入"指示器
-        this.messages = this.messages.filter((msg) => !msg.typing);
-        this.isTyping = false;
-
-        // 添加AI回复
-        const responses = [
-          "我理解您的问题了，让我帮您分析一下...",
-          "这是一个很好的问题！根据我的分析...",
-          "感谢您的提问。关于这个问题...",
-          "我已收到您上传的文件，正在处理中...",
-          "根据您提供的信息，我的建议是...",
-        ];
-
-        const randomResponse =
-            responses[Math.floor(Math.random() * responses.length)];
-        this.addMessage({
-          sender: "ai",
-          type: "text",
-          content: randomResponse,
-        });
-      }, 1500 + Math.random() * 2000);
+    formatMessageTime() {
+      const now = new Date();
+      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     },
 
     handleFileChange(event) {
@@ -256,7 +253,6 @@ export default {
       const droppedFiles = Array.from(event.dataTransfer.files);
       this.files = [...this.files, ...droppedFiles];
     },
-
 
     formatFileSize(bytes) {
       if (bytes === 0) return "0 Bytes";
@@ -310,124 +306,273 @@ export default {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: "Arial", sans-serif;
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
 
 .ai-assistant {
-  background-color: #f5f5f5;
-  color: #333;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background-color: #f8f9fa;
 }
 
 header {
-  background-color: #4a6fa5;
+  background: linear-gradient(135deg, #4a6fa5 0%, #3a5a8a 100%);
   color: white;
-  padding: 15px 20px;
-  text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 1.2rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  opacity: 0.9;
 }
 
 .chat-container {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  height: 60%;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .message {
   max-width: 80%;
-  margin-bottom: 15px;
-  padding: 12px 16px;
-  border-radius: 18px;
-  line-height: 1.4;
+  margin-bottom: 1.2rem;
   position: relative;
+}
+
+.message-content {
+  padding: 0.8rem 1.2rem;
+  border-radius: 1rem;
+  line-height: 1.5;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .user-message {
   align-self: flex-end;
+}
+
+.user-message .message-content {
   background-color: #4a6fa5;
   color: white;
-  border-bottom-right-radius: 5px;
+  border-bottom-right-radius: 0.3rem;
 }
 
 .ai-message {
   align-self: flex-start;
-  background-color: #e9e9e9;
-  border-bottom-left-radius: 5px;
+}
+
+.ai-message .message-content {
+  background-color: white;
+  border: 1px solid #e1e4e8;
+  border-bottom-left-radius: 0.3rem;
+}
+
+.message-time {
+  font-size: 0.7rem;
+  color: #6c757d;
+  margin-top: 0.3rem;
+  text-align: right;
+}
+
+.ai-message .message-time {
+  text-align: left;
 }
 
 .input-area {
-  padding: 15px;
+  padding: 1rem;
   background-color: white;
-  border-top: 1px solid #ddd;
-  display: flex;
-  align-items: center;
+  border-top: 1px solid #e1e4e8;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.02);
 }
 
-textarea {
-  flex: 1;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  padding: 12px 15px;
-  resize: none;
-  height: 45px;
-  max-height: 120px;
-  outline: none;
-  font-size: 16px;
+.file-upload-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.drop-zone {
+  border: 2px dashed #d1d5db;
+  border-radius: 0.8rem;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #f9fafb;
+  margin-bottom: 1rem;
+}
+
+.drop-zone:hover {
+  border-color: #4a6fa5;
+  background-color: #f0f4f8;
+}
+
+.drop-zone p {
+  margin-top: 0.5rem;
+  color: #4a6fa5;
+  font-weight: 500;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: #6b7280 !important;
+  font-weight: normal !important;
+  margin-top: 0.3rem !important;
 }
 
 .file-input {
   display: none;
 }
 
-.file-label,
-.send-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+.selected-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.file-badge {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-left: 10px;
-  cursor: pointer;
-  background-color: #f0f0f0;
-  color: #4a6fa5;
+  background-color: #edf2f7;
+  border-radius: 1rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  gap: 0.4rem;
+}
+
+.file-icon {
+  margin-right: 0.3rem;
+}
+
+.file-name {
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-size {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+.remove-file {
+  background: none;
   border: none;
-  font-size: 18px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.remove-file:hover {
+  color: #ef4444;
 }
 
 .send-btn {
   background-color: #4a6fa5;
   color: white;
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: auto;
 }
 
-.file-label:hover,
 .send-btn:hover {
-  opacity: 0.9;
+  background-color: #3a5a8a;
+  transform: translateY(-2px);
+}
+
+/* 文件卡片样式 */
+.file-card {
+  background-color: white;
+  border-radius: 0.8rem;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e1e4e8;
+  max-width: 300px;
+}
+
+.file-icon {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
 }
 
 .file-info {
-  font-size: 12px;
-  color: #666;
-  margin-left: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.file-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.download-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background-color: #4a6fa5;
+  color: white;
+  text-align: center;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.download-btn:hover {
+  background-color: #3a5a8a;
+}
+
+/* 图片预览样式 */
+.image-preview {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 0.5rem;
+  margin: 0.5rem 0;
+  cursor: pointer;
+  border: 1px solid #e1e4e8;
 }
 
 .typing-indicator {
   display: inline-block;
-  padding-left: 5px;
+  padding-left: 0.5rem;
 }
 
 .typing-indicator span {
   display: inline-block;
-  width: 6px;
-  height: 6px;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
-  background-color: #999;
-  margin-right: 3px;
+  background-color: #9ca3af;
+  margin-right: 0.2rem;
   animation: typing 1s infinite ease-in-out;
 }
 
@@ -440,78 +585,28 @@ textarea {
 }
 
 @keyframes typing {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0);
+    opacity: 0.6;
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-0.2rem);
+    opacity: 1;
   }
 }
 
-/* 文件卡片样式 */
-.file-card {
-  background-color: white;
-  border-radius: 10px;
-  padding: 12px;
-  margin-top: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  max-width: 300px;
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .message {
+    max-width: 90%;
+  }
+  
+  .file-card {
+    max-width: 100%;
+  }
+  
+  .drop-zone {
+    padding: 1.5rem;
+  }
 }
-
-.file-icon {
-  font-size: 40px;
-  text-align: center;
-  margin-bottom: 8px;
-}
-
-.file-name {
-  font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.file-size {
-  font-size: 12px;
-  color: #666;
-  margin: 4px 0;
-}
-
-.download-btn {
-  display: block;
-  background-color: #4a6fa5;
-  color: white;
-  text-align: center;
-  padding: 6px 12px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-size: 14px;
-  margin-top: 8px;
-}
-
-.download-btn:hover {
-  opacity: 0.9;
-}
-
-/* 图片预览样式 */
-.image-preview {
-  max-width: 100%;
-  max-height: 200px;
-  border-radius: 8px;
-  margin-top: 8px;
-  cursor: pointer;
-}
-
-.drop-zone {
-  border: 2px dashed #ccc;
-  padding: 30px;
-  text-align: center;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  cursor: pointer;
-}
-
-
 </style>

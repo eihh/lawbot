@@ -135,8 +135,7 @@
 
 
 <script>
-
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import LoginAuth from "@/components/login/Login_Auth.vue"; //**引入验证码组件**
 import http from "@/axios/awaitapi.js";
 import api from "@/axios/awaitapi.js";
@@ -176,10 +175,6 @@ export default {
       this.hihhens = false;
     },
 
-
-
-
-
     async loginchange() {
       let temp = true;
       const h = this.$createElement;
@@ -211,8 +206,6 @@ export default {
       return Math.floor(Math.random() * (max - min) + min);
     },
 
-
-
     async login() {
       const h = this.$createElement;
 
@@ -220,15 +213,17 @@ export default {
         this.$notify({
           title: "",
           message: h(
-              "p",
-              { style: "color:#333" },
-              "用户名或密码不能为空，请重新输入！"
+            "p",
+            { style: "color:#333" },
+            "用户名或密码不能为空，请重新输入！"
           ),
         });
         return;
       }
 
-      if (this.ruleForm.auth.toLowerCase() !== this.identifyCode.toLowerCase()) {
+      if (
+        this.ruleForm.auth.toLowerCase() !== this.identifyCode.toLowerCase()
+      ) {
         this.$notify({
           title: "",
           message: h("p", { style: "color:#333" }, "验证码错误，请重新输入！"),
@@ -237,50 +232,50 @@ export default {
         return;
       }
 
-
       console.log(this.ruleForm);
 
       // 发送登录请求
-      try {
-        this.request.post("/login", this.ruleForm).then(res => {
-          //打印返回结果
-          console.log(res);
-          //状态码
-          const code = res.code;
-          //状态码为成功(200)
-          if (code === 200) {
+      this.$router.push({ path: "/home" });
+      // try {
+      //   this.request.post("/login", this.ruleForm).then(res => {
+      //     //打印返回结果
+      //     console.log(res);
+      //     //状态码
+      //     const code = res.code;
+      //     //状态码为成功(200)
+      //     if (code === 200) {
 
-            this.$router.push({path: "/home"});
-            this.$message({type:'success', message: res.msg});
-          }
-          if (code === 500) {
-            this.$message({type: 'error', message: res.msg});
-          }
+      //       this.$router.push({path: "/home"});
+      //       this.$message({type:'success', message: res.msg});
+      //     }
+      //     if (code === 500) {
+      //       this.$message({type: 'error', message: res.msg});
+      //     }
 
-        })
+      //   })
 
-        /*const response = await test.post("/login", {
-          username: this.ruleForm.username,
-          password: this.ruleForm.password,
-        });
+      //   /*const response = await test.post("/login", {
+      //     username: this.ruleForm.username,
+      //     password: this.ruleForm.password,
+      //   });
 
-        if (response.data.success) {
-          this.$router.push("/home");
-        } else {
-          this.$notify({
-            title: "登录失败",
-            message: response.data.message || "用户名或密码错误",
-          });
-          this.getIdentifyingCode();
-        }*/
-      } catch (error) {
-        this.$notify({
-          title: "错误",
-          message: "请求失败：" + error.message,
-        });
-        this.getIdentifyingCode();
-      }
-    }
+      //   if (response.data.success) {
+      //     this.$router.push("/home");
+      //   } else {
+      //     this.$notify({
+      //       title: "登录失败",
+      //       message: response.data.message || "用户名或密码错误",
+      //     });
+      //     this.getIdentifyingCode();
+      //   }*/
+      // } catch (error) {
+      //   this.$notify({
+      //     title: "错误",
+      //     message: "请求失败：" + error.message,
+      //   });
+      //   this.getIdentifyingCode();
+      // }
+    },
   },
   components: {
     LoginAuth: LoginAuth,
