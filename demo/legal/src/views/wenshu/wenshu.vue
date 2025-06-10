@@ -18,7 +18,7 @@
             <vue-markdown>
               {{ message.content }}
             </vue-markdown>
-<!--            <div v-html="message.content"></div>-->
+
           </template>
 
           <template v-else-if="message.type === 'file'">

@@ -169,6 +169,9 @@
                 "
               ></div>
             </div>
+            <div style="width: 10%" @click="rts1">
+              <img src="https://img0.baidu.com/it/u=2095648217,1151460980&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500" width="20px" height="20px" />
+            </div>
             <div style="width: 10%" @click="rts">
               <img src="@/assets/coms/rentou.png" width="20px" height="20px" />
             </div>
@@ -292,6 +295,9 @@ export default {
       this.dialogVisible = true;
     },
 
+    rts1() {
+     this.$router.push('/souc')
+    },
     hiddends(e) {
       if (e == 1) {
         this.isCollapse = !this.isCollapse;

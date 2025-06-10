@@ -17,6 +17,8 @@ const yuce = () => import('@/views/yuce/yuce')
 const wenda = () => import('@/views/wenda/wenda')
 const history = () => import('@/views/wenda/history')
 const history1 = () => import('@/views/wenshu/history1')
+const souc = () => import('@/views/souc/souc')
+const zhuc = () => import('@/views/register/register')
 
 Vue.use(VueRouter)
 
@@ -24,6 +26,11 @@ const routes = [
   {
     path: '/',
     component: Login
+  },
+  {
+    name: '19',
+    path: '/zhuc',
+    component: zhuc
   },
   {
     path: '/home',
@@ -61,6 +68,11 @@ const routes = [
         name: '16',
         path: '/lishi1',
         component: history1
+      },
+      {
+        name: '18',
+        path: '/souc',
+        component: souc
       },
 
     ]

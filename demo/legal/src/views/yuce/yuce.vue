@@ -4,25 +4,14 @@
     <header class="app-header">
       <div class="header-content">
         <div class="logo">
-          <svg class="logo-icon" viewBox="0 0 1024 1024" width="32" height="32">
-            <path d="M512 512m-448 0a448 448 0 1 0 896 0 448 448 0 1 0-896 0Z" fill="#3B82F6"></path>
-            <path d="M512 384c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64z m0 320c53 0 96-43 96-96h-192c0 53 43 96 96 96z" fill="#FFFFFF"></path>
-          </svg>
           <span>AI智能助手</span>
         </div>
         <nav class="nav-links">
           <a href="#" class="nav-link active">问答对话</a>
-          <!-- <a href="#" class="nav-link">知识库</a>
-          <a href="#" class="nav-link">历史记录</a>
-          <a href="#" class="nav-link">设置</a> -->
         </nav>
         <div class="user-actions">
           <button class="upgrade-btn" style="color: blue;">升级专业版</button>
           <div class="user-avatar">
-            <svg viewBox="0 0 1024 1024" width="24" height="24">
-              <path d="M512 512m-512 0a512 512 0 1 0 1024 0 512 512 0 1 0-1024 0Z" fill="#3B82F6"></path>
-              <path d="M512 256c70.7 0 128 57.3 128 128s-57.3 128-128 128-128-57.3-128-128 57.3-128 128-128z m192 320c0 35.3-28.7 64-64 64H384c-35.3 0-64-28.7-64-64v-64c0-70.7 57.3-128 128-128h128c70.7 0 128 57.3 128 128v64z" fill="#FFFFFF"></path>
-            </svg>
           </div>
         </div>
       </div>
@@ -30,41 +19,6 @@
 
     <!-- 主体内容区域 -->
     <main class="main-content">
-      <!-- 新增的欢迎卡片 -->
-      <div class="welcome-card">
-        <div class="welcome-content">
-          <h1>欢迎使用AI智能助手</h1>
-          <p>您可以在这里提问任何问题，我们的AI会为您提供专业的解答</p>
-          <!-- <div class="welcome-tips">
-            <div class="tip-item">
-              <svg viewBox="0 0 1024 1024" width="18" height="18">
-                <path d="M512 512m-448 0a448 448 0 1 0 896 0 448 448 0 1 0-896 0Z" fill="#10B981"></path>
-                <path d="M512 384c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64z m0 320c53 0 96-43 96-96h-192c0 53 43 96 96 96z" fill="#FFFFFF"></path>
-              </svg>
-              <span>专业领域知识解答</span>
-            </div>
-            <div class="tip-item">
-              <svg viewBox="0 0 1024 1024" width="18" height="18">
-                <path d="M512 512m-448 0a448 448 0 1 0 896 0 448 448 0 1 0-896 0Z" fill="#10B981"></path>
-                <path d="M512 384c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64z m0 320c53 0 96-43 96-96h-192c0 53 43 96 96 96z" fill="#FFFFFF"></path>
-              </svg>
-              <span>24小时在线服务</span>
-            </div>
-            <div class="tip-item">
-              <svg viewBox="0 0 1024 1024" width="18" height="18">
-                <path d="M512 512m-448 0a448 448 0 1 0 896 0 448 448 0 1 0-896 0Z" fill="#10B981"></path>
-                <path d="M512 384c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64z m0 320c53 0 96-43 96-96h-192c0 53 43 96 96 96z" fill="#FFFFFF"></path>
-              </svg>
-              <span>多语言支持</span>
-            </div>
-          </div> -->
-        </div>
-        <div class="welcome-decoration">
-          <div class="decoration-circle"></div>
-          <div class="decoration-circle"></div>
-          <div class="decoration-circle"></div>
-        </div>
-      </div>
 
       <!-- 问答容器 -->
       <div class="ai-qa-container">
@@ -83,7 +37,12 @@
                 </span>
                 <span class="time">{{ item.time }}</span>
               </div>
-              <div class="question-content" v-html="item.question"></div>
+              <div class="question-content" >
+                <vue-markdown>
+                  {{ item.question }}
+                </vue-markdown>
+
+              </div>
               <div class="corner-decoration"></div>
             </div>
             <!-- AI回答（左侧） -->
@@ -92,7 +51,7 @@
                 <span class="ai-icon">
                   <svg class="icon" viewBox="0 0 1024 1024" width="16" height="16">
                     <path d="M512 512m-448 0a448 448 0 1 0 896 0 448 448 0 1 0-896 0Z" fill="#10B981"></path>
-                    <path d="M512 384c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64z m0 320c53 0 96-43 96-96h-192c0 53 43 96 96 96z" fill="#FFFFFF"></path>
+                    <path d="M512 384c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64z m0 320c53 0 96-43 96-96h-192c0 53 43 96 96 96z" fill="#10B981"></path>
                   </svg>
                   AI助理
                 </span>
@@ -176,38 +135,7 @@
 
     <!-- 新增的页脚 -->
     <footer class="app-footer" style="color: blue;">
-      <div class="footer-content">
-        <div class="footer-links" style="color: blue;">
-          <a href="#" class="footer-link" style="color: blue;">关于我们</a>
-          <a href="#" class="footer-link" style="color: blue;">隐私政策</a>
-          <a href="#" class="footer-link" style="color: blue;">服务条款</a>
-          <a href="#" class="footer-link" style="color: blue;">帮助中心</a>
-          <a href="#" class="footer-link" style="color: blue;">联系我们</a>
-        </div>
-        <div class="footer-copyright" style="color: blue;">
-          © 2023 AI智能助手 版权所有
-        </div>
-        <div class="footer-social">
-          <a href="#" class="social-icon">
-            <svg viewBox="0 0 1024 1024" width="20" height="20">
-              <path d="M512 512m-512 0a512 512 0 1 0 1024 0 512 512 0 1 0-1024 0Z" fill="#3B82F6"></path>
-              <path d="M512 256c70.7 0 128 57.3 128 128s-57.3 128-128 128-128-57.3-128-128 57.3-128 128-128z m192 320c0 35.3-28.7 64-64 64H384c-35.3 0-64-28.7-64-64v-64c0-70.7 57.3-128 128-128h128c70.7 0 128 57.3 128 128v64z" fill="#FFFFFF"></path>
-            </svg>
-          </a>
-          <a href="#" class="social-icon">
-            <svg viewBox="0 0 1024 1024" width="20" height="20">
-              <path d="M512 512m-512 0a512 512 0 1 0 1024 0 512 512 0 1 0-1024 0Z" fill="#3B82F6"></path>
-              <path d="M512 256c70.7 0 128 57.3 128 128s-57.3 128-128 128-128-57.3-128-128 57.3-128 128-128z m192 320c0 35.3-28.7 64-64 64H384c-35.3 0-64-28.7-64-64v-64c0-70.7 57.3-128 128-128h128c70.7 0 128 57.3 128 128v64z" fill="#FFFFFF"></path>
-            </svg>
-          </a>
-          <a href="#" class="social-icon">
-            <svg viewBox="0 0 1024 1024" width="20" height="20">
-              <path d="M512 512m-512 0a512 512 0 1 0 1024 0 512 512 0 1 0-1024 0Z" fill="#3B82F6"></path>
-              <path d="M512 256c70.7 0 128 57.3 128 128s-57.3 128-128 128-128-57.3-128-128 57.3-128 128-128z m192 320c0 35.3-28.7 64-64 64H384c-35.3 0-64-28.7-64-64v-64c0-70.7 57.3-128 128-128h128c70.7 0 128 57.3 128 128v64z" fill="#FFFFFF"></path>
-            </svg>
-          </a>
-        </div>
-      </div>
+
     </footer>
   </div>
 </template>
@@ -215,9 +143,14 @@
 <script>
 import request from "@/axios/request";
 import jsPDF from "jspdf";
+import VueMarkdown from "vue-markdown";
 
 export default {
   name: "AbA",
+  components: {
+    // eslint-disable-next-line vue/no-unused-components
+    'vue-markdown': VueMarkdown
+  },
   data() {
     return {
       inputQuestion: "",
@@ -262,6 +195,19 @@ export default {
       };
 
       try {
+
+        this.history.push( {
+          question: this.inputQuestion,
+          time: new Date().toLocaleTimeString(),
+          answer: "123456inputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestion",
+          keywords: [],
+          timestamp: "",
+        });
+
+
+
+
+
         // 向后端发送请求
         const response = await request.post("/yuce/send", this.inputQuestion);
         console.log(response);
@@ -275,7 +221,12 @@ export default {
             keywords: [],
             timestamp: "",
           };
-          this.history.push(newQ);
+
+
+          //this.history.push(newQ);
+
+
+
         }
       } finally {
         this.isLoading = false;
@@ -376,7 +327,7 @@ export default {
   --text-color: #1e293b;
   --text-light: #64748b;
   --bg-color: #f8fafc;
-  --card-bg: #ffffff;
+  --card-bg: #c6f8fc;
   --header-bg: rgba(255, 255, 255, 0.9);
   --footer-bg: #1e293b;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -426,6 +377,7 @@ body {
   top: 0;
   z-index: 100;
   border-bottom: 1px solid rgba(203, 213, 225, 0.3);
+  height: 100px;
 }
 
 .header-content {
@@ -549,39 +501,12 @@ body {
   margin: 0 auto;
   padding: 2rem;
   width: 100%;
-}
-
-/* 欢迎卡片样式 */
-.welcome-card {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
-  border-radius: var(--radius-xl);
-  padding: 2rem;
-  margin-bottom: 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-  border: 1px solid rgba(203, 213, 225, 0.3);
-}
-
-.welcome-card::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
-  z-index: 0;
 }
 
-.welcome-content {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-}
+
+
+
 
 .welcome-content h1 {
   font-size: 2rem;
@@ -677,7 +602,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  height: 50%;
+  height: 100%;
+  max-height: 70vh;      /* 限制高度，最大为视口高度的100% */
+  overflow-y: auto;      /* 添加垂直滚动条 */
+
 }
 
 .qa-history {
@@ -718,14 +646,25 @@ body {
   align-self: flex-start;
   background: var(--card-bg);
   width: 80%;
-  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 0;
+
+  color: #282727;
+
   padding: 1.5rem;
   margin: 0.5rem 0;
   box-shadow: var(--shadow-md);
   position: relative;
-  border: 1px solid rgba(203, 213, 225, 0.3);
+
   transition: var(--transition);
   animation: fadeIn 0.5s ease-out;
+
+  word-wrap: break-word;  /* 确保长单词或链接能够自动换行 */
+  white-space: normal;    /* 确保正常换行 */
+
+  border: 2px solid #3B82F6;
+  border-radius: 20px 20px 20px 20px; /* 上左，右上，下右，左下 */
+
+
+
 }
 
 .ai-answer:hover {
@@ -753,15 +692,24 @@ body {
     var(--primary-color) 0%,
     var(--primary-dark) 100%
   );
-  color: white;
+  color: #282727;
   width: 80%;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 var(--radius-lg);
+
   padding: 1.5rem;
   margin: 0.5rem 0;
   position: relative;
   box-shadow: var(--shadow-md);
   transition: var(--transition);
   animation: fadeIn 0.5s ease-out;
+
+
+  word-wrap: break-word;  /* 确保长单词或链接能够自动换行 */
+  white-space: normal;    /* 确保正常换行 */
+
+  /* 添加边框 */
+  border: 2px solid #332e2e;  /* 你可以根据需要调整颜色和宽度 */
+  border-radius: 20px 20px 20px 20px; /* 上左，右上，下右，左下 */
+
 }
 
 .user-question:hover {
@@ -833,7 +781,7 @@ body {
 .time {
   opacity: 0.8;
   font-size: 0.85em;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(197, 15, 15, 0.8);
 }
 
 .ai-answer .time {
@@ -1058,8 +1006,9 @@ textarea:focus {
 }
 
 .export-btn {
+  color: #1e293b;
   background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
-  color: white;
+
   padding: 0.5rem 1rem;
   border-radius: var(--radius-sm);
   font-size: 0.85em;
@@ -1073,6 +1022,7 @@ textarea:focus {
 }
 
 .export-btn:hover {
+  color: rgba(26, 168, 211, 0.7);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }

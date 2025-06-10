@@ -50,81 +50,21 @@
         </div>
         <div class="user-login" @click="login">
           <span><strong>登录</strong></span>
-        </div>
-      </div>
-      <div
-        v-if="hihhens == true"
-        style="
-          width: 550px;
-          height: 450px;
-          background-color: #ffffff;
-          position: absolute;
-          left: 20%;
-          top: 28%;
-        "
-        class="lis"
-      >
-        <el-form
-          ref="form"
-          :model="form"
-          :rules="rules"
-          label-width="150px"
-          style="margin-top: 20%"
-        >
-          <el-form-item label="旧密码:" prop="a">
-            <div class="form-item">
-              <div style="width: 10px"></div>
-              <div class="item">
-                <i class="iconfont icon-mima"></i>
-              </div>
-              <el-input
-                type="password"
-                show-password
-                v-model="form.a"
-              ></el-input>
-            </div>
-          </el-form-item>
-          <el-form-item label="新密码:" label-width="150px" prop="b">
-            <div class="form-item">
-              <div style="width: 10px"></div>
-              <div class="item">
-                <i class="iconfont icon-mima"></i>
-              </div>
-              <el-input
-                type="password"
-                show-password
-                v-model="form.b"
-              ></el-input>
-            </div>
-          </el-form-item>
-          <el-form-item label="确认密码:" label-width="150px" prop="c">
-            <div class="form-item">
-              <div style="width: 10px"></div>
-              <div class="item">
-                <i class="iconfont icon-mima"></i>
-              </div>
-              <el-input
-                type="password"
-                show-password
-                v-model="form.c"
-              ></el-input>
-            </div>
-          </el-form-item>
-        </el-form>
+          <br>
 
-        <el-button
-          @click="fanhui"
-          type="primary"
-          style="
-            margin-left: 52%;
-            margin-top: 80px;
-            background: none;
-            color: #3981ee;
-          "
-          >返回登录</el-button
-        >
-        <el-button type="primary" @click="loginchange">确认</el-button>
+
+          <router-link to="/zhuc">注册</router-link>
+
+        </div>
+
+
+
+
+
+
+
       </div>
+
     </main>
   </div>
 </template>
@@ -202,6 +142,15 @@ export default {
           this.identifyCodes[this.randomNum(0, this.identifyCodes.length)];
       }
     },
+
+
+
+    zg() {
+      this.$router.push("/zhuc");
+    },
+
+
+
     randomNum(min, max) {
       return Math.floor(Math.random() * (max - min) + min);
     },
@@ -322,7 +271,7 @@ export default {
   left: 39%;
   right: 0;
   border-radius: 2%;
-  /* background: url("@/assets/login/operatorback.png") no-repeat center; */
+
 }
 
 .logo {
@@ -451,4 +400,28 @@ export default {
 
   height: 99.5vh;
 }
+
+
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.login-link a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.login-link a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+
+
+
 </style>

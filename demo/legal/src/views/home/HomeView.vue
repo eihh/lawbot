@@ -31,35 +31,7 @@
         </div>
       </section>
 
-      <!-- 特性区域 -->
-      <section class="features">
-        <div class="container">
-          <h2 class="section-title">为什么选择 illegal</h2>
-          <div class="features-grid">
-            <div class="feature-card">
-              <div class="feature-icon">💡</div>
-              <h3 class="feature-title">强大的知识库</h3>
-              <p class="feature-desc">
-                基于海量数据训练，覆盖广泛领域，提供准确、全面的回答
-              </p>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon">⚡</div>
-              <h3 class="feature-title">快速响应</h3>
-              <p class="feature-desc">
-                毫秒级响应速度，让你的工作流程更加流畅高效
-              </p>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon">🔒</div>
-              <h3 class="feature-title">安全可靠</h3>
-              <p class="feature-desc">
-                严格的数据隐私保护措施，确保你的信息安全
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+
     </main>
 
     <!-- 页脚 -->
