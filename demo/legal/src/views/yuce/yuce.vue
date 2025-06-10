@@ -12,12 +12,12 @@
         </div>
         <nav class="nav-links">
           <a href="#" class="nav-link active">问答对话</a>
-          <a href="#" class="nav-link">知识库</a>
+          <!-- <a href="#" class="nav-link">知识库</a>
           <a href="#" class="nav-link">历史记录</a>
-          <a href="#" class="nav-link">设置</a>
+          <a href="#" class="nav-link">设置</a> -->
         </nav>
         <div class="user-actions">
-          <button class="upgrade-btn">升级专业版</button>
+          <button class="upgrade-btn" style="color: blue;">升级专业版</button>
           <div class="user-avatar">
             <svg viewBox="0 0 1024 1024" width="24" height="24">
               <path d="M512 512m-512 0a512 512 0 1 0 1024 0 512 512 0 1 0-1024 0Z" fill="#3B82F6"></path>
@@ -35,7 +35,7 @@
         <div class="welcome-content">
           <h1>欢迎使用AI智能助手</h1>
           <p>您可以在这里提问任何问题，我们的AI会为您提供专业的解答</p>
-          <div class="welcome-tips">
+          <!-- <div class="welcome-tips">
             <div class="tip-item">
               <svg viewBox="0 0 1024 1024" width="18" height="18">
                 <path d="M512 512m-448 0a448 448 0 1 0 896 0 448 448 0 1 0-896 0Z" fill="#10B981"></path>
@@ -57,7 +57,7 @@
               </svg>
               <span>多语言支持</span>
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="welcome-decoration">
           <div class="decoration-circle"></div>
@@ -175,16 +175,16 @@
     </main>
 
     <!-- 新增的页脚 -->
-    <footer class="app-footer">
+    <footer class="app-footer" style="color: blue;">
       <div class="footer-content">
-        <div class="footer-links">
-          <a href="#" class="footer-link">关于我们</a>
-          <a href="#" class="footer-link">隐私政策</a>
-          <a href="#" class="footer-link">服务条款</a>
-          <a href="#" class="footer-link">帮助中心</a>
-          <a href="#" class="footer-link">联系我们</a>
+        <div class="footer-links" style="color: blue;">
+          <a href="#" class="footer-link" style="color: blue;">关于我们</a>
+          <a href="#" class="footer-link" style="color: blue;">隐私政策</a>
+          <a href="#" class="footer-link" style="color: blue;">服务条款</a>
+          <a href="#" class="footer-link" style="color: blue;">帮助中心</a>
+          <a href="#" class="footer-link" style="color: blue;">联系我们</a>
         </div>
-        <div class="footer-copyright">
+        <div class="footer-copyright" style="color: blue;">
           © 2023 AI智能助手 版权所有
         </div>
         <div class="footer-social">
@@ -270,9 +270,8 @@ export default {
           const newQ = {
             question: this.inputQuestion,
             time: new Date().toLocaleTimeString(),
-
-            // answer: formattedPrediction(response.msg),
-            answer: response.msg ,
+            answer: formattedPrediction(response.msg),
+            //answer: response.msg,
             keywords: [],
             timestamp: "",
           };
@@ -408,10 +407,11 @@ body {
   line-height: 1.6;
   color: var(--text-color);
   background-color: var(--bg-color);
+  height: 80vh;
 }
 
 .app-container {
-  min-height: 100vh;
+  height: 92vh;
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%);
   display: flex;
   flex-direction: column;
@@ -572,7 +572,7 @@ body {
   top: -50%;
   right: -50%;
   width: 100%;
-  height: 200%;
+  height: 100%;
   background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
   z-index: 0;
 }
@@ -677,7 +677,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  height: 100%;
+  height: 50%;
 }
 
 .qa-history {
@@ -691,6 +691,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.3);
   scrollbar-width: thin;
   scrollbar-color: var(--primary-light) transparent;
+  color: black !important;
 }
 
 .qa-history::-webkit-scrollbar {

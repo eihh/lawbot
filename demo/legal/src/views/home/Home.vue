@@ -16,7 +16,17 @@
           "
           v-if="!isCollapse"
         >
-          <img src="@/assets/coms/tab.png" width="100%" height="100%" />
+          <div
+            style="
+              width: 100%;
+              height: 70px;
+              line-height: 70px;
+              font-size: 25px;
+            "
+          >
+            <div style="margin-left: 5px; color: white">法律文书系统</div>
+          </div>
+          <!-- <img src="@/assets/coms/tab.png" width="100%" height="100%" /> -->
           <img
             src="@/assets/coms/zs.png"
             width="30px"
@@ -27,7 +37,7 @@
         </div>
         <div
           class="shouq"
-          style="background: #344353; width: 220px; cursor: pointer"
+          style="background: #344353; cursor: pointer"
           v-if="isCollapse"
         >
           <img
@@ -69,7 +79,7 @@
             :key="index"
           >
             <template slot="title">
-              <i class="el-icon-location"></i>
+              <i :class="item.icon" style="font-size: 20px"></i>
               <span>{{ item.pname }}</span>
             </template>
 
@@ -134,12 +144,12 @@
                 text-align: left;
               "
             >
-              <span style="font-size: 18px"
+              <!-- <span style="font-size: 18px"
                 >&nbsp;--------&nbsp;<span
                   style="display: inline-block; margin-top: 8px; color: #6d41a1"
                   >欢迎你</span
                 >
-              </span>
+              </span> -->
               <!-- <el-input
                 placeholder="请输入内容"
                 prefix-icon="el-icon-search"
@@ -159,22 +169,10 @@
                 "
               ></div>
             </div>
-            <div style="width: 10%">
+            <div style="width: 10%" @click="rts">
               <img src="@/assets/coms/rentou.png" width="20px" height="20px" />
             </div>
-
-            <div
-              style="
-                width: 15%;
-                font-family: KaiTi;
-                font-size: 20px;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-              "
-            >
-              {{ name }}
-            </div>
+            <div>管理员</div>
             <div style="width: 10%">
               <img src="@/assets/coms/zhong.png" width="20px" height="20px" />
             </div>
@@ -207,6 +205,26 @@
         </div>
       </div>
     </div>
+
+    <el-dialog title="修改密码" :visible.sync="dialogVisible" width="30%">
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="旧密码">
+          <el-input v-model="form.pas"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码">
+          <el-input v-model="form.pas1"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码">
+          <el-input v-model="form.pas2"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -216,6 +234,12 @@ export default {
   name: "Home_H",
   data() {
     return {
+      form: {
+        pas: "",
+        pas1: "",
+        pas2: "",
+      },
+      dialogVisible: false,
       input2: "",
       arr_new: [],
       session_data: "",
@@ -229,41 +253,29 @@ export default {
     ...mapState("mobile", ["name"]),
   },
   async mounted() {
-    const menu = [
-      {
-        pname: "用户管理",
-        path: "/stu",
-        son: [{ name: "用户列表", path: "/user" }],
-      },
-      {
-        pname: "土地管理",
-        path: "/grade",
-        son: [{ name: "土地列表", path: "/grade" }],
-      },
-      {
-        pname: "视图管理",
-        path: "/tu",
-        son: [{ name: "图示列表", path: "/tu" }],
-      },
-      {
-        pname: "专家管理",
-        path: "/zj",
-        son: [{ name: "专家列表", path: "/zj" }],
-      },
-    ];
+    const menu = [];
     const menu1 = [
       {
         pname: "法律文书",
+        icon: "el-icon-tickets",
         path: "/wenshu",
-        son: [{ name: "法律文书摘要", path: "/wenshu" }],
+        son: [
+          { name: "法律文书摘要", path: "/wenshu" },
+          { name: "历史会话", path: "/lishi" },
+        ],
       },
       {
         pname: "法律预测",
+        icon: "el-icon-cloudy",
         path: "/yuce",
-        son: [{ name: "法律预测报告", path: "/yuce" }],
+        son: [
+          { name: "法律预测报告", path: "/yuce" },
+          { name: "历史会话", path: "/lishi1" },
+        ],
       },
       {
         pname: "法律问答",
+        icon: "el-icon-mic",
         path: "/wenda",
         son: [{ name: "问题答疑", path: "/wenda" }],
       },
@@ -276,6 +288,23 @@ export default {
     this.mu();
   },
   methods: {
+    rts() {
+      this.dialogVisible = true;
+    },
+
+    hiddends(e) {
+      if (e == 1) {
+        this.isCollapse = !this.isCollapse;
+        let s1 = document.querySelector(".shouq");
+        s1.style.width = "64px";
+        s1.style.height = "100vh";
+      }
+      if (e == 2) {
+        this.isCollapse = !this.isCollapse;
+        let s1 = document.querySelector(".shouq");
+        s1.style.width = "220px";
+      }
+    },
     mu() {},
     outlogin() {
       this.$router.push("/");
@@ -296,11 +325,11 @@ export default {
 .homes .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 220px;
   /* height: 100%; */
-  height: 100vh;
+  height: 90vh;
 }
 
 .homes .el-menu--collapse {
-  height: 100%;
+  height: 96.5vh;
 }
 .homes .el-menu {
   border: none !important;

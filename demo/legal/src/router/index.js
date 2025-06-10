@@ -15,6 +15,8 @@ const yuce = () => import('@/views/yuce/yuce')
 
 
 const wenda = () => import('@/views/wenda/wenda')
+const history = () => import('@/views/wenda/history')
+const history1 = () => import('@/views/wenshu/history1')
 
 Vue.use(VueRouter)
 
@@ -50,7 +52,16 @@ const routes = [
         path: '/wenda',
         component: wenda
       },
-
+      {
+        name: '15',
+        path: '/lishi',
+        component: history
+      },
+      {
+        name: '16',
+        path: '/lishi1',
+        component: history1
+      },
 
     ]
   },

@@ -9,6 +9,7 @@ import md5 from 'js-md5';
 import request from "@/axios/request";
 
 
+
 Vue.prototype.request=request
 
 

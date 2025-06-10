@@ -4,7 +4,10 @@
   </div>
 </template>
 <script>
+import VueMarkdown from 'vue-markdown';
+
 export default {
+
   data() {
     return {};
   },

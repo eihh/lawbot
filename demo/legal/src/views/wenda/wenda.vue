@@ -76,13 +76,63 @@ export default {
   data() {
     return {
       userInput: "",
+      conversation_id : "",
+      content:"",
+
       isSending: false,
       messages: [
         { id: 1, content: "你好！我是AI助手，有什么可以帮您的？", isAi: true },
       ],
+      dialogList: [
+        {
+          "role": 1,
+          "content": "你好",
+          "updateTime": "2025-06-09T21:24:58.45"
+        }
+      ],
+
       messageId: 2,
     };
   },
+
+
+  async created() {
+    const response = await request.get("/history/list/20");
+    console.log(response);
+    this.dialogList = response.data;
+
+    for (let i = 0; i < this.dialogList.length; i++) {
+      let a = this.dialogList[i];
+
+      if (a.role === 0){
+        console.log("0")
+        const aiResponse = {
+          id: this.messageId++,
+          content: a.content,
+          isAi: true,
+        };
+        this.messages.push(aiResponse);
+
+      }
+      if (a.role === 1){
+        console.log("1")
+        const userMessage = {
+          id: this.messageId++,
+          content: a.content,
+          isAi: false,
+        };
+        this.messages.push(userMessage);
+      }
+
+
+      console.log(this.dialogList[i].role, this.dialogList[i].content);
+    }
+
+
+
+  },
+
+
 
   methods: {
     formatTime() {
@@ -98,13 +148,25 @@ export default {
         content: this.userInput.trim(),
         isAi: false,
       };
+
       this.messages.push(userMessage);
 
       const response = await request.post("/wenda/send", {
-        id: userMessage.id,
+        id: this.conversation_id,
         content: userMessage.content,
       });
+
+
       console.log(response);
+      const response_json = response.msg
+      try {
+        const parsed = JSON.parse(response_json);
+        this.conversation_id = parsed.conversation_id;
+        this.content = parsed.message
+      } catch (e) {
+        console.error('JSON 解析失败:', e);
+      }
+
 
       this.userInput = "";
       this.isSending = true;
@@ -114,11 +176,13 @@ export default {
 
       const aiResponse = {
         id: this.messageId++,
-        content: response.msg,
+        content: this.content,
         isAi: true,
       };
 
       this.messages.push(aiResponse);
+
+      this.content = ""
 
       this.isSending = false;
       this.scrollToBottom();

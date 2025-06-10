@@ -1,9 +1,6 @@
 package com.example.demo.pojo;
 
 
-import java.time.LocalDateTime;
-
-
 public class User {
     private Integer userId;
     private String username;
@@ -17,11 +14,6 @@ public class User {
         this.username = username;
         this.password = password;
     }
-
-
-
-
-
 
 
 
@@ -59,12 +51,5 @@ public class User {
 
 
 
-    //private String email;
-    //private String phone;
-    //private Short gender;
-    //private Short status;
-    //private Short roleId;
-    //private String image;
-    //private LocalDateTime createTime;
-    //private LocalDateTime updateTime;
+
 }

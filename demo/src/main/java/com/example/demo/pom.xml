@@ -125,7 +125,7 @@
         </dependency>
 
         <!-- 必加：包含 PoiLogManager 和完整功能 -->
-         <dependency>
+        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml-full</artifactId>
             <version>5.4.0</version>

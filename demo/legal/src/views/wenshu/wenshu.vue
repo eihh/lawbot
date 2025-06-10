@@ -15,7 +15,10 @@
       >
         <div class="message-content">
           <template v-if="message.type === 'text'">
-            <div v-html="message.content"></div>
+            <vue-markdown>
+              {{ message.content }}
+            </vue-markdown>
+<!--            <div v-html="message.content"></div>-->
           </template>
 
           <template v-else-if="message.type === 'file'">
@@ -110,9 +113,20 @@
 
 <script>
 import request from "@/axios/request";
+import VueMarkdown from "vue-markdown";
+
+
+
+
+
 
 export default {
   name: "AIAssistant",
+  components: {
+    'vue-markdown': VueMarkdown
+  },
+
+
   data() {
     return {
       userInput: "",
@@ -132,16 +146,19 @@ export default {
       const totalBytes = this.files.reduce((sum, file) => sum + file.size, 0);
       return this.formatFileSize(totalBytes);
     },
+
   },
+
+
   methods: {
     triggerFileInput() {
       document.getElementById('fileUpload').click();
     },
-    
+
     removeFile(index) {
       this.files.splice(index, 1);
     },
-    
+
     async uploadFile(file) {
       const formData = new FormData();
       formData.append("file", file);
@@ -169,8 +186,8 @@ export default {
         this.addMessage({
           sender: "ai",
           type: "text",
-          // content: `<strong>文书摘要：</strong><br/>${formattedSummary(response.msg)}`,
-          content: `<strong>文书摘要：</strong><br/>${response.msg}`,
+          content: `<strong>文书摘要：</strong><br/>${formattedSummary(response.msg)}`,
+          // content: `<strong>文书摘要：</strong><br/>${response.msg}`,
         });
 
       } catch (error) {
@@ -312,7 +329,7 @@ export default {
 .ai-assistant {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 90vh;
   background-color: #f8f9fa;
 }
 
