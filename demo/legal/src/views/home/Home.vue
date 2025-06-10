@@ -110,7 +110,7 @@
               text-align: right;
               color: #8291a9;
               font-family: cursive;
-             
+
               font-size: 25px;
               overflow: hidden;
               white-space: nowrap;
