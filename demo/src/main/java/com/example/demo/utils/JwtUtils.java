@@ -38,4 +38,10 @@ public class JwtUtils {
                 .getBody();
         return claims;
     }
+
+    //从jwt获取用户名
+    public static String getUsernameFromToken(String jwtToken) {
+        Claims claims = parseJWT(jwtToken);
+        return (String) claims.get("username");
+    }
 }

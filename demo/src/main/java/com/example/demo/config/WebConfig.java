@@ -22,10 +22,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .maxAge(3600); // 预检请求的缓存时间
     }
 
-    //@Override
-    //public void addInterceptors(InterceptorRegistry registry) {
-    //    //注册拦截器          并制定拦截的路径资源                /**为拦截所有资源              不拦截那些资源
-    //    registry.addInterceptor(loginCheckInterceptor).addPathPatterns("/**").excludePathPatterns("/login","/register");
-    //}
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        //注册拦截器          并制定拦截的路径资源                /**为拦截所有资源              不拦截那些资源
+        registry.addInterceptor(loginCheckInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/login","/register");
+    }
 
 }

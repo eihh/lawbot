@@ -2,23 +2,19 @@ package com.example.demo.controller;
 
 
 import com.example.demo.common.Result;
-import com.example.demo.pojo.Dialog;
 import com.example.demo.pojo.dto.DialogDTO;
-import com.example.demo.service.QaRecordService;
+import com.example.demo.service.DialogHistoryService;
+import com.example.demo.utils.JwtUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,21 +26,27 @@ import java.util.Map;
 public class WendaController {
 
     @Autowired
-    private QaRecordService qaRecordService;
+    private DialogHistoryService dialogHistoryService;
 
 
 
 
     @PostMapping("/send")
-    public Result SendMassage(@RequestBody Map<String, Object> requestData) throws IOException, InterruptedException {
+    public Result SendMassage(@RequestBody Map<String, Object> requestData,
+                              @RequestHeader String jwtToken) throws IOException, InterruptedException {
         System.out.println("接收到的字符串: " + requestData);
 
         String conversation_id = (String) requestData.get("id");
         String content = (String) requestData.get("content");
 
+        //对话的用户名
+        String username = JwtUtils.getUsernameFromToken(jwtToken);
 
-        DialogDTO d1 = new DialogDTO(1,content);
-        qaRecordService.save(d1);
+
+        DialogDTO d1 = new DialogDTO();
+        d1.setContent(content);
+        d1.setRole(1);
+        dialogHistoryService.save(d1,username);
 
 
 
@@ -97,9 +99,11 @@ public class WendaController {
             data.put("conversation_id", conversation_id_new);
             data.put("message", cleanedResponse);
 
-            //存入数据库
-            DialogDTO d2 = new DialogDTO(0,cleanedResponse);
-            qaRecordService.save(d2);
+            //通过jwt获取用户名构造dialog 存入数据库
+            DialogDTO d2 = new DialogDTO();
+            d2.setContent(cleanedResponse);
+            d2.setRole(0);
+            dialogHistoryService.save(d2,username);
 
 
 

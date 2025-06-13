@@ -5,7 +5,7 @@ import com.example.demo.pojo.dto.DialogDTO;
 
 import java.util.List;
 
-public interface QaRecordService {
+public interface DialogHistoryService {
     /*void saveQaRecord(QaRecord qaRecord);*/
 
     /**
@@ -19,14 +19,14 @@ public interface QaRecordService {
      * 保存对话记录
      * @param dialog
      */
-    void save(DialogDTO dialog);
+    void save(DialogDTO dialog,String username);
 
     // 查询所有对话记录
-    List<Dialog> list();
+    List<Dialog> list(String username);
 
     // 查询number条对话记录
-    List<Dialog> list(Integer number);
+    List<Dialog> list(Integer number, String username);
 
     //  删除所有对话记录
-    void delete();
+    void delete(String username);
 }

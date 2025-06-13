@@ -24,16 +24,17 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         String url = request.getRequestURI().toString();
 
         //判断url中是否包含login(config文件中已经实现了这一点,其实可以删掉)
-        if (url.contains("login")) {
+        if (url.contains("login") || url.contains("register")) {
             //登录操作直接放行
             return true;
         }
 
         //获取令牌(token)
         String jwt = request.getHeader("jwtToken");
+        System.out.println("jwt:" + jwt);
 
         //判断令牌是否存在,如果不存在,返回错误结果(未登录)
-        if (!StringUtils.hasLength(jwt)) {
+        if (jwt == null) {
             //log.info("请求头token为空,返回未登录的信息");
             Result error = Result.error(Constants.CODE_401,"NOT_LOGIN");
             //手动将对象转换为json
