@@ -1,21 +1,21 @@
 <template>
   <div class="app-container">
     <!-- 新增的头部导航 -->
-    <header class="app-header">
-      <div class="header-content">
-        <div class="logo">
-          <span>AI智能助手</span>
-        </div>
-        <nav class="nav-links">
-          <a href="#" class="nav-link active">问答对话</a>
-        </nav>
-        <div class="user-actions">
-          <button class="upgrade-btn" style="color: blue;">升级专业版</button>
-          <div class="user-avatar">
-          </div>
-        </div>
-      </div>
-    </header>
+<!--    <header class="app-header">-->
+<!--      <div class="header-content">-->
+<!--        <div class="logo">-->
+<!--          <span>AI智能助手</span>-->
+<!--        </div>-->
+<!--        <nav class="nav-links">-->
+<!--          <a href="#" class="nav-link active">问答对话</a>-->
+<!--        </nav>-->
+<!--        <div class="user-actions">-->
+<!--          <button class="upgrade-btn" style="color: blue;">升级专业版</button>-->
+<!--          <div class="user-avatar">-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </header>-->
 
     <!-- 主体内容区域 -->
     <main class="main-content">
@@ -603,7 +603,7 @@ body {
   flex-direction: column;
   gap: 1.5rem;
   height: 100%;
-  max-height: 70vh;      /* 限制高度，最大为视口高度的100% */
+  max-height: 100vh;      /* 限制高度，最大为视口高度的100% */
   overflow-y: auto;      /* 添加垂直滚动条 */
 
 }
@@ -1159,25 +1159,19 @@ textarea:focus {
   
   .main-content {
     padding: 1rem;
+    height: 100%;
   }
   
-  .welcome-card {
-    flex-direction: column;
-    text-align: center;
-    padding: 1.5rem;
-  }
+
   
-  .welcome-tips {
-    justify-content: center;
-  }
+
   
-  .welcome-decoration {
-    display: none;
-  }
+
   
   .input-area {
     flex-direction: column;
     gap: 1rem;
+    height: 20%;
   }
   
   .ai-answer,
