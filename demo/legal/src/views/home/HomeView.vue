@@ -6,78 +6,37 @@
       <!-- 英雄区域 -->
       <section class="hero">
         <div class="container">
-          <h1 class="hero-title">深度求索AI助手</h1>
+          <h1 class="hero-title">AI法律文书助手</h1>
           <p class="hero-subtitle">
-            illegal Chat 是一款强大的 AI
-            助手，能够回答你的问题、协助创作，并帮助你更高效地工作
+            本项目是一款基于 DeepSeek 模型构建的智能法律助手系统，
+            旨在为用户提供高效、智能、实用的法律服务支持。
           </p>
         </div>
-        <div
-          style="
-            width: 200px;
-            height: 100px;
-            line-height: 100px;
-            text-align: center;
-            background-color: aqua;
-            margin: 0 auto;
-            border-radius: 10px;
-            color: white;
-            font-size: 30px;
-            cursor: pointer;
-          "
-          @click="tt"
-        >
-          点击进去
+
+
+
+        <div class="three-columns">
+          <div class="column" @click="goToRoute('/wenshu')">
+            <img src="@/assets/image/wenshu.jpg" alt="图片1" />
+            <span>   法律文书摘要   </span>
+          </div>
+          <div class="column"  @click="goToRoute('/yuce')">
+            <img src="@/assets/image/yuce.jpg" alt="图片2" />
+            <span>   法律预测   </span>
+          </div>
+          <div class="column" @click="goToRoute('/wenda')">
+            <img src="@/assets/image/wenda.jpg" alt="图片3" />
+            <span>   法律问答   </span>
+          </div>
         </div>
+
+
       </section>
 
 
     </main>
 
-    <!-- 页脚 -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-column">
-            <h3>产品</h3>
-            <ul class="footer-links">
-              <li><a href="#">illegal Chat</a></li>
-              <li><a href="#">illegal Coder</a></li>
-              <li><a href="#">API</a></li>
-              <li><a href="#">企业版</a></li>
-            </ul>
-          </div>
-          <div class="footer-column">
-            <h3>资源</h3>
-            <ul class="footer-links">
-              <li><a href="#">文档</a></li>
-              <li><a href="#">博客</a></li>
-              <li><a href="#">社区</a></li>
-              <li><a href="#">帮助中心</a></li>
-            </ul>
-          </div>
-          <div class="footer-column">
-            <h3>公司</h3>
-            <ul class="footer-links">
-              <li><a href="#">关于我们</a></li>
-              <li><a href="#">加入我们</a></li>
-              <li><a href="#">联系我们</a></li>
-            </ul>
-          </div>
-          <div class="footer-column">
-            <h3>法律</h3>
-            <ul class="footer-links">
-              <li><a href="#">隐私政策</a></li>
-              <li><a href="#">服务条款</a></li>
-              <li><a href="#">使用政策</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <p>© 2024 illegal. 保留所有权利。</p>
-        </div>
-      </div>
-    </footer>
+
   </div>
 </template>
 
@@ -98,6 +57,10 @@ export default {
     };
   },
   methods: {
+    goToRoute(path) {
+      this.$router.push(path);
+    },
+
     tt() {
       this.$router.push("/wenshu");
     },
@@ -261,6 +224,7 @@ export default {
 /* 英雄区域 */
 .hero {
   padding: 80px 0;
+  height: 70vh;
   text-align: center;
 }
 
@@ -534,4 +498,29 @@ export default {
     transform: translateY(-5px);
   }
 }
+
+
+.three-columns {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+}
+
+.column {
+  flex: 1;
+  text-align: center;
+  border: 1px solid #ddd;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.column img {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border-radius: 8px;
+}
+
 </style>

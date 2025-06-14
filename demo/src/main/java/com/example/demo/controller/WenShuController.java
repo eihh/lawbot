@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 
 import com.example.demo.common.Result;
+import com.example.demo.utils.RequestContextHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -33,14 +34,19 @@ import java.util.Map;
 @RequestMapping("/wenshu")
 
 public class WenShuController {
-
-
     @PostMapping("/upload")
     public Result handleFileUpload(@RequestParam("file") MultipartFile file) {
         String filename = file.getOriginalFilename();
         if (filename == null) {
             return Result.error("空文件");
         }
+
+        //保存文件名到ThreadLocal
+        RequestContextHolder.setFileName(RequestContextHolder.SCENE_WENSHU,filename);
+
+
+
+
 
         try {
             String textContent = extractTextFromFile(file);
@@ -51,6 +57,7 @@ public class WenShuController {
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> data = new HashMap<>();
             data.put("document", textContent);
+            //data.put("length", 500);
 
             String jsonBody = mapper.writeValueAsString(data);
 
@@ -83,6 +90,8 @@ public class WenShuController {
             return Result.error("文件解析失败");
         }
     }
+
+
 
     private String extractTextFromFile(MultipartFile file) throws Exception {
         String filename = file.getOriginalFilename();

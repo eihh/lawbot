@@ -6,7 +6,7 @@
         
         <form @submit.prevent="handleSubmit" class="register-form">
           <div class="form-group">
-            <label for="username">用户名</label>
+            <label for="username" >用户名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3-10位字母或数字</label>
             <input 
               type="text" 
               id="username" 
@@ -21,7 +21,7 @@
           
 
           <div class="form-group">
-            <label for="password">密码</label>
+            <label for="password">密码&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6-10位字母或数字</label>
             <input 
               :type="showPassword ? 'text' : 'password'" 
               id="password" 
@@ -55,12 +55,14 @@
           </div>
           
           <div class="form-actions">
+
             <button type="submit" class="register-btn" :disabled="isSubmitting">
               <span v-if="!isSubmitting">注册</span>
               <span v-else class="loading">
                 <i class="fas fa-spinner fa-spin"></i> 处理中...
               </span>
             </button>
+
           </div>
         </form>
         
@@ -75,6 +77,8 @@
   </template>
   
   <script>
+  import request from "@/axios/request";
+
   export default {
     name: 'RegisterPage',
     data() {
@@ -90,24 +94,50 @@
       }
     },
     methods: {
+
+
+
       async handleSubmit() {
         if (this.form.password !== this.form.confirmPassword) {
-          alert('两次输入的密码不匹配')
+          this.$message({type:'error', message: '两次输入的密码不匹配'});
+
           return
         }
-        
+
+        //改变按钮状态，开始发送消息
         this.isSubmitting = true
         
         try {
           // 这里替换为实际的注册API调用
-          // await this.$api.register(this.form)
-          console.log('注册信息:', this.form)
-          
+
+
+          const response = await request.post("/register", {
+            username: this.form.username,
+            password: this.form.password
+          });
+
+          console.log(response);
+
+
           // 模拟API延迟
           await new Promise(resolve => setTimeout(resolve, 1500))
-          
-          alert('注册成功!')
-          this.$router.push('/login')
+
+          if (response.code === 200) {
+            this.$message({type:'success', message: response.msg});
+            //注册成功记录jwttoken
+            //localStorage.setItem('jwtToken', response.data.token)
+
+            this.$router.push('/login')
+
+          }
+          if (response.code === 500) {
+            this.$message({type:'error', message: response.msg});
+          }
+
+
+
+
+
         } catch (error) {
           console.error('注册失败:', error)
           alert('注册失败: ' + (error.message || '请稍后再试'))

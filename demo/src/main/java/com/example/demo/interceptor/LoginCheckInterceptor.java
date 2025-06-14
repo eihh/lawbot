@@ -31,7 +31,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         //获取令牌(token)
         String jwt = request.getHeader("jwtToken");
-        System.out.println("jwt:" + jwt);
+        System.out.println("令牌校验获取到的jwt:" + jwt);
 
         //判断令牌是否存在,如果不存在,返回错误结果(未登录)
         if (jwt == null) {

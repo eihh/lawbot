@@ -53,7 +53,7 @@
           <br>
 
 
-          <router-link to="/zhuc">注册</router-link>
+          <router-link to="/register">注册</router-link>
 
         </div>
 
@@ -79,6 +79,7 @@ import { jwtDecode } from "jwt-decode";
 import LoginAuth from "@/components/login/Login_Auth.vue"; //**引入验证码组件**
 import http from "@/axios/awaitapi.js";
 import api from "@/axios/awaitapi.js";
+import request from "@/axios/request";
 
 export default {
   name: "LoginS",
@@ -145,10 +146,6 @@ export default {
 
 
 
-    zg() {
-      this.$router.push("/zhuc");
-    },
-
 
 
     randomNum(min, max) {
@@ -182,6 +179,34 @@ export default {
       }
 
       console.log(this.ruleForm);
+
+      const response = await request.post("/login", {
+        username: this.ruleForm.username,
+        password: this.ruleForm.password
+      });
+
+      localStorage.setItem('jwtToken', response.data.token)
+
+      //解析jwt,存储用户名
+      const token = localStorage.getItem('jwtToken')
+      if (token) {
+        try {
+          const decoded = jwtDecode(token)
+
+          // 比如获取用户名：
+          const username = decoded.username
+          localStorage.setItem('username', username)
+          console.log('用户名:', username)
+
+        } catch (err) {
+          console.error('JWT解析失败:', err)
+        }
+      }
+
+      console.log(response);
+
+
+
 
       // 发送登录请求
       this.$router.push({ path: "/home" });

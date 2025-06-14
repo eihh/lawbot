@@ -2,10 +2,7 @@
   <div class="homes">
     <div style="display: flex; background: #dbe7ee">
       <div style="background: #344353">
-        <!-- <el-radio-group v-model="isCollapse">
-          <el-radio-button :label="false">展开</el-radio-button>
-          <el-radio-button :label="true">收起</el-radio-button>
-        </el-radio-group> -->
+
         <div
           class="shouq"
           style="
@@ -57,13 +54,6 @@
           :collapse-transition="false"
           router
         >
-          <!-- <el-submenu index="1" v-for="(item, index) in 2" :key="index">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>导航一</span>
-            </template>
-            <el-menu-item index="1-2">选项2</el-menu-item>
-          </el-submenu> -->
 
           <el-submenu index="0+'cc'">
             <template slot="title">
@@ -117,14 +107,14 @@
               text-overflow: ellipsis;
             "
           >
-            <span style="color: #cbdcf7">A</span>
-            <span style="color: #b7e1e4">I</span>
-            <span style="color: #b7e1e4">法</span>
-            <span style="color: #b7e1e4">律</span>
-            <span style="color: #e9d4ff">文</span>
-            <span style="color: #ffe0e6">书</span>
-            <span style="color: #ffe0e6">系</span>
-            <span style="color: #ffe0e6">统</span>
+            <span style="color: rgb(185,14,14)">A</span>
+            <span style="color: rgb(246,153,59)">I</span>
+            <span style="color: rgba(233,252,0,0.85)">法</span>
+            <span style="color: rgb(51,255,61)">律</span>
+            <span style="color: rgba(31,250,209,0.7)">文</span>
+            <span style="color: rgba(7,135,245,0.7)">书</span>
+            <span style="color: rgba(90,14,248,0.7)">系</span>
+            <span style="color: rgb(40,39,39)">统</span>
           </div>
           <div
             style="
@@ -144,18 +134,7 @@
                 text-align: left;
               "
             >
-              <!-- <span style="font-size: 18px"
-                >&nbsp;--------&nbsp;<span
-                  style="display: inline-block; margin-top: 8px; color: #6d41a1"
-                  >欢迎你</span
-                >
-              </span> -->
-              <!-- <el-input
-                placeholder="请输入内容"
-                prefix-icon="el-icon-search"
-                v-model="input2"
-              >
-              </el-input> -->
+
             </div>
             <div style="width: 5%">
               <div
@@ -172,12 +151,12 @@
             <div style="width: 10%" @click="rts1">
               <img src="https://img0.baidu.com/it/u=2095648217,1151460980&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500" width="20px" height="20px" />
             </div>
-            <div style="width: 10%" @click="rts">
+            <div style="width: 10%" >
               <img src="@/assets/coms/rentou.png" width="20px" height="20px" />
             </div>
-            <div>管理员</div>
+            <div>{{ username }}</div>
             <div style="width: 10%">
-              <img src="@/assets/coms/zhong.png" width="20px" height="20px" />
+
             </div>
             <div style="width: 5%">
               <div
@@ -249,6 +228,7 @@ export default {
       isCollapse: false,
       menu: [],
       employeeid: "",
+      username:""
     };
   },
   created() {},
@@ -256,6 +236,9 @@ export default {
     ...mapState("mobile", ["name"]),
   },
   async mounted() {
+    // 页面加载时从 localStorage 获取用户名
+    this.username = localStorage.getItem('username') || '游客';
+
     const menu = [];
     const menu1 = [
       {
@@ -264,7 +247,7 @@ export default {
         path: "/wenshu",
         son: [
           { name: "法律文书摘要", path: "/wenshu" },
-          { name: "历史会话", path: "/lishi" },
+          { name: "法律文书摘要收藏", path: "/souc" },
         ],
       },
       {
@@ -273,7 +256,6 @@ export default {
         path: "/yuce",
         son: [
           { name: "法律预测报告", path: "/yuce" },
-          { name: "历史会话", path: "/lishi1" },
         ],
       },
       {

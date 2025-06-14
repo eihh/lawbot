@@ -1,21 +1,5 @@
 <template>
   <div class="app-container">
-    <!-- 新增的头部导航 -->
-<!--    <header class="app-header">-->
-<!--      <div class="header-content">-->
-<!--        <div class="logo">-->
-<!--          <span>AI智能助手</span>-->
-<!--        </div>-->
-<!--        <nav class="nav-links">-->
-<!--          <a href="#" class="nav-link active">问答对话</a>-->
-<!--        </nav>-->
-<!--        <div class="user-actions">-->
-<!--          <button class="upgrade-btn" style="color: blue;">升级专业版</button>-->
-<!--          <div class="user-avatar">-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </header>-->
 
     <!-- 主体内容区域 -->
     <main class="main-content">
@@ -26,7 +10,7 @@
         <div class="qa-history">
           <div v-for="(item, index) in history" :key="index" class="qa-item">
             <!-- 用户问题（右侧） -->
-            <div class="user-question">
+            <div v-if="item.question !== ''" class="user-question">
               <div class="question-header">
                 <span class="user-icon">
                   <svg class="icon" viewBox="0 0 1024 1024" width="16" height="16">
@@ -56,6 +40,7 @@
                   AI助理
                 </span>
                 <div class="actions">
+
                   <button class="export-btn" @click="exportSingleAnswer(item)">
                     <svg class="icon" viewBox="0 0 1024 1024" width="14" height="14">
                       <path d="M832 832H192V192h320V64H192C121.6 64 64 121.6 64 192v640c0 70.4 57.6 128 128 128h640c70.4 0 128-57.6 128-128V512h-128v320z" fill="#FFFFFF"></path>
@@ -63,6 +48,8 @@
                     </svg>
                     导出PDF
                   </button>
+
+
                 </div>
               </div>
               <div class="answer-content">
@@ -92,6 +79,7 @@
           <div class="upload-wrapper">
             <el-upload
               class="upload-demo"
+              :headers="uploadHeaders"
               drag
               action="http://localhost:9090/yuce/upload"
               auto-upload
@@ -153,6 +141,9 @@ export default {
   },
   data() {
     return {
+      uploadHeaders: {
+        jwtToken: localStorage.getItem("jwtToken")
+      },
       inputQuestion: "",
       history: [],
       isLoading: false,
@@ -166,6 +157,36 @@ export default {
       },
     };
   },
+
+  async created() {
+
+    this.history = [
+      {
+      question: "",
+      time: new Date().toLocaleTimeString(),
+      answer: "正在挂载模型,请稍后........",
+      keywords: [],
+      timestamp: "",
+      }
+    ]
+
+    //请求挂载模型
+    const reload_response = await request.post("/reload", {content: "predict"})
+    console.log("reload")
+    console.log(reload_response)
+
+    this.history = [
+      {
+        question: "",
+        time: new Date().toLocaleTimeString(),
+        answer: "请上传法律文书或者输入相关信息进行法律预测",
+        keywords: [],
+        timestamp: "",
+      }
+    ]
+
+  },
+
   computed: {
     totalFileSize() {
       const totalBytes = this.files.reduce((sum, file) => sum + file.size, 0);
@@ -196,19 +217,22 @@ export default {
 
       try {
 
-        this.history.push( {
-          question: this.inputQuestion,
-          time: new Date().toLocaleTimeString(),
-          answer: "123456inputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestion",
-          keywords: [],
-          timestamp: "",
-        });
+        // this.history.push( {
+        //   question: this.inputQuestion,
+        //   time: new Date().toLocaleTimeString(),
+        //   answer: "123456inputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestion",
+        //   keywords: [],
+        //   timestamp: "",
+        // });
 
 
 
 
 
         // 向后端发送请求
+
+
+
         const response = await request.post("/yuce/send", this.inputQuestion);
         console.log(response);
 
@@ -223,7 +247,7 @@ export default {
           };
 
 
-          //this.history.push(newQ);
+          this.history.push(newQ);
 
 
 

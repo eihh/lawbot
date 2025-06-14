@@ -22,7 +22,7 @@ public class DialogHistoryController {
     @PostMapping("/save")
     //参数是dto和响应头
     public Result get(@RequestBody DialogDTO dialogDTO,@RequestHeader String jwtToken) {
-        log.info("对话内容:{}",dialogDTO);
+        //log.info("对话内容:{}",dialogDTO);
         //从响应头获取用户名
         String username = JwtUtils.getUsernameFromToken(jwtToken);
 

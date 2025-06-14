@@ -43,9 +43,18 @@ public class DialogHistoryServiceImpl implements DialogHistoryService {
         if(number==null || number<=0){
             throw new RuntimeException("number不能小于1");
         }
-        //查询前number次对话
-        return dialogHistoryRepository
-                .findTopNumberByUsernameOrderByUpdateTimeDesc(username, number);
+        //查询一共有几次对话
+        List<Dialog> dialogs = dialogHistoryRepository.findAllByUsername(username);
+        if(number>dialogs.size()){
+            return dialogs;
+        }else {
+            //返回前number次对话
+            return dialogs.subList(number,number+1);
+        }
+
+
+//        return dialogHistoryRepository
+//                .findTopNumberByUsernameOrderByUpdateTimeDesc(username, number);
     }
 
     // 删除对话记录的方法

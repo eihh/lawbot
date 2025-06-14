@@ -18,8 +18,10 @@ public class RegisterController {
 
     @RequestMapping()
     public Result register(@RequestBody RegisterDTO registerDTO) {
+
+
         registerService.register(registerDTO);
 
-        return Result.success();
+        return Result.success("注册成功!");
     }
 }

@@ -56,7 +56,7 @@ public class WendaController {
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> data = new HashMap<>();
             data.put("conversation_id",conversation_id);
-            data.put("message", content);
+            data.put("instruction", content);
             data.put("max_turns", "10");
             String jsonBody = mapper.writeValueAsString(data);
 
@@ -105,12 +105,7 @@ public class WendaController {
             d2.setRole(0);
             dialogHistoryService.save(d2,username);
 
-
-
-
             String response_jsonBody = mapper.writeValueAsString(data);
-
-
 
             return Result.success(response_jsonBody);
 

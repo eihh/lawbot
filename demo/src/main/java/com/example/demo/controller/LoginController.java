@@ -39,6 +39,8 @@ public class LoginController {
         claims.put("username", username);
 
         String jwtToken = JwtUtils.generateJwt(claims);
+        System.out.println("本次登录产生的jwt令牌:{}" + jwtToken);
+
         UserVO userVO = UserVO.builder()
                 .userId(user.getUserId())
                 .username(username)

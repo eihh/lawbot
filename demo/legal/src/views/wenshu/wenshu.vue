@@ -14,10 +14,32 @@
           :class="['message', `${message.sender}-message`]"
       >
         <div class="message-content">
+
+
           <template v-if="message.type === 'text'">
+            <!--收藏按钮-->
+            <el-button v-if="message.title !==''"
+                       :type="message.isFavorite ? 'success' : 'warning'"
+                       size="small"
+                       class="favorite-button"
+                       @click="toggleFavorite(message, index)"
+                       circle>
+              <i :class="message.isFavorite ? 'el-icon-star-on' : 'el-icon-star-off'" class="favorite-icon"></i>
+            </el-button>
+            <!--导出pdf按钮-->
+            <el-button v-if="message.title !==''"
+                       type="primary"
+                       size="small"
+                       class="favorite-button"
+                       @click="exportToPDF(message)"
+                       circle>
+              <i class="el-icon-download"></i>
+            </el-button>
+
             <vue-markdown>
               {{ message.content }}
             </vue-markdown>
+
 
           </template>
 
@@ -43,7 +65,8 @@
                     download
                     target="_blank"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7 10 12 15 17 10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -70,7 +93,8 @@
             @drop.prevent="handleDrop"
             @click="triggerFileInput"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4a6fa5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="#4a6fa5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="17 8 12 3 7 8"></polyline>
             <line x1="12" y1="3" x2="12" y2="15"></line>
@@ -78,7 +102,7 @@
           <p>拖拽文件到这里或点击上传</p>
           <p class="hint">支持PDF、Word、TXT等文档格式</p>
         </div>
-        
+
         <input
             type="file"
             id="fileUpload"
@@ -94,14 +118,16 @@
           <span class="file-name">{{ file.name }}</span>
           <span class="file-size">{{ formatFileSize(file.size) }}</span>
           <button class="remove-file" @click="removeFile(index)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
         </div>
         <button class="send-btn" @click="sendMessage">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="22" y1="2" x2="11" y2="13"></line>
             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
           </svg>
@@ -114,10 +140,9 @@
 <script>
 import request from "@/axios/request";
 import VueMarkdown from "vue-markdown";
-
-
-
-
+import jsPDF from "jspdf";
+import '../../font/simfang-normal'
+import html2canvas from "html2canvas";
 
 
 export default {
@@ -132,16 +157,49 @@ export default {
       userInput: "",
       files: [],
       messages: [
-        {
-          sender: "ai",
-          type: "text",
-          content: "您好！我是AI助手，专门处理法律文书摘要。您可以上传法律文书文件，我将为您提取关键信息并生成摘要。",
-        },
+
       ],
+
+
       isTyping: false,
     };
   },
+
+  async created() {
+
+    this.messages = [
+      {
+        sender: "ai",
+        title: "",
+        type: "text",
+        content: "正在挂载模型,请稍等......",
+        isFavorite: false,
+      },
+    ]
+
+    const reload_response = await request.post("/reload", {content: "summarize"})
+    console.log("reload")
+    console.log(reload_response)
+
+    if (reload_response.code === 200) {
+      this.messages.push({
+        sender: "ai",
+        title: "",
+        type: "text",
+        content: "您好！我是AI助手，专门处理法律文书摘要。您可以上传法律文书文件，我将为您提取关键信息并生成摘要。",
+        isFavorite: false,
+      })
+
+    }
+
+
+  },
+
+
+
   computed: {
+
+
     totalFileSize() {
       const totalBytes = this.files.reduce((sum, file) => sum + file.size, 0);
       return this.formatFileSize(totalBytes);
@@ -151,6 +209,55 @@ export default {
 
 
   methods: {
+    async exportToPDF(message) {
+      // 创建一个隐藏容器渲染 HTML
+      const container = document.createElement('div');
+      container.style.position = 'fixed';
+      container.style.left = '-9999px';
+      container.style.width = '800px';  // 宽度尽量大一点，提升分辨率
+      container.style.fontFamily = '宋体, SimSun, serif';
+      container.innerHTML = message.content;
+      document.body.appendChild(container);
+
+      // 转换为高分辨率 canvas
+      const canvas = await html2canvas(container, { scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+
+      // A4 纸尺寸（单位 pt）
+      const pdf = new jsPDF('p', 'pt', 'a4');
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      // 多页处理
+      while (heightLeft > 0) {
+        pdf.addImage(
+            imgData,
+            'PNG',
+            0,
+            position,
+            imgWidth,
+            imgHeight
+        );
+        heightLeft -= pageHeight;
+
+        if (heightLeft > 0) {
+          pdf.addPage();
+          position -= pageHeight;
+        }
+      }
+
+      pdf.save('文书摘要.pdf');
+      document.body.removeChild(container);
+    },
+
+
+
     triggerFileInput() {
       document.getElementById('fileUpload').click();
     },
@@ -159,9 +266,40 @@ export default {
       this.files.splice(index, 1);
     },
 
+    async toggleFavorite(message, index) {// 收藏功能
+      if (message.isFavorite === true) {
+        this.$message({type: 'warning', message: "已收藏,请勿重复点击."});
+        return
+      }
+
+
+      const response = await request.post("/collection/yuce/save",
+          {
+            title: message.title,
+            content: message.content,
+            role: 0
+          }
+      )
+      console.log(response)
+
+      if (response.code === 200) {
+        this.$message({type: 'success', message: response.msg});
+        message.isFavorite = true;
+      } else if (response.code === 500) {
+        this.$message({type: 'error', message: response.msg});
+      } else {
+        this.$message({type: 'error', message: "系统异常"});
+      }
+
+
+    },
+
+
     async uploadFile(file) {
       const formData = new FormData();
       formData.append("file", file);
+
+      let filename = file.name;
 
       function formattedSummary(msg) {
         const parsed = JSON.parse(msg);
@@ -172,6 +310,7 @@ export default {
         this.addMessage({
           sender: "ai",
           type: "text",
+          title: "",
           content: "正在分析您上传的法律文书，请稍候...",
         });
 
@@ -186,8 +325,10 @@ export default {
         this.addMessage({
           sender: "ai",
           type: "text",
+          title: filename,
           content: `<strong>文书摘要：</strong><br/>${formattedSummary(response.msg)}`,
-          // content: `<strong>文书摘要：</strong><br/>${response.msg}`,
+          //content: `<strong>文书摘要：</strong><br/>${response.msg}`,
+          isFavorite: false,
         });
 
       } catch (error) {
@@ -195,6 +336,7 @@ export default {
         this.addMessage({
           sender: "ai",
           type: "text",
+          title: "",
           content: "抱歉，处理文件时出现错误。请确保上传的是有效的法律文书文件并重试。",
         });
       }
@@ -259,7 +401,7 @@ export default {
 
     formatMessageTime() {
       const now = new Date();
-      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
     },
 
     handleFileChange(event) {
@@ -617,13 +759,24 @@ header h1 {
   .message {
     max-width: 90%;
   }
-  
+
   .file-card {
     max-width: 100%;
   }
-  
+
   .drop-zone {
     padding: 1.5rem;
   }
+
+  .favorite-icon {
+    font-size: 36px; /* 控制图标大小 */
+  }
+
+  .favorite-button {
+    font-size: 36px;
+  }
+
 }
+
+
 </style>

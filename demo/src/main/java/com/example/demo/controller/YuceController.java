@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 
 import com.example.demo.common.Result;
+import com.example.demo.utils.RequestContextHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -33,6 +34,9 @@ public class YuceController {
         if (filename == null) {
             return Result.error("空文件");
         }
+
+        //保存文件名到ThreadLocal
+        RequestContextHolder.setFileName(RequestContextHolder.SCENE_YUCE,filename);
 
         try {
             String textContent = extractTextFromFile(file);

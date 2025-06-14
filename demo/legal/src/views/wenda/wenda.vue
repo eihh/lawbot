@@ -3,12 +3,18 @@
     <div class="chat-header">
       <div class="header-content">
         <div class="logo">
-          <i class="fas fa-robot"></i>
-          <span>AI 助手</span>
+          <i class="fas fa-robot" style="color: #3b82f6"></i>
+          <span style="color: #3b82f6">AI 助手</span>
         </div>
+
+        <button @click="cleanMessage" :disabled="isSending" class="clean-button">
+        <span  style="color: red;">
+          清空聊天记录
+        </span>
+        </button>
         <div class="status">
           <span class="status-dot"></span>
-          <span>在线</span>
+          <span  style="color: #1e293b">在线</span>
         </div>
       </div>
     </div>
@@ -21,20 +27,20 @@
         :class="{ 'ai-message': message.isAi, 'user-message': !message.isAi }"
       >
         <div v-if="message.isAi" class="avatar ai-avatar">
-          <i class="fas fa-robot"></i>
+          <i class="fas fa-robot" style="color: #3b82f6"></i>
         </div>
 
         <div class="message-bubble">
           <div class="message-content">
             {{ message.content }}
           </div>
-          <div class="message-time">
+          <div class="message-time" style="color: #000000">
             {{ formatTime() }}
           </div>
         </div>
 
         <div v-if="!message.isAi" class="avatar user-avatar">
-          <i class="fas fa-user"></i>
+          <i class="fas fa-user" style="color: #10b981"></i>
         </div>
       </div>
     </div>
@@ -47,15 +53,10 @@
           placeholder="输入你的问题..."
           class="message-input"
         />
-        <div class="input-actions">
-          <button class="action-button">
-            <i class="fas fa-smile"></i>
-          </button>
-          <button class="action-button">
-            <i class="fas fa-paperclip"></i>
-          </button>
-        </div>
+
       </div>
+
+
       <button @click="sendMessage" :disabled="isSending" class="send-button">
         <span v-if="!isSending" style="color: red;">
           发送
@@ -91,13 +92,14 @@ export default {
         }
       ],
 
-      messageId: 2,
+      messageId: 1,
     };
   },
 
 
   async created() {
-    const response = await request.get("/history/list/20");
+    const username = localStorage.getItem("username");
+    const response = await request.get(`/history/list/${username}/20`);
     console.log(response);
     this.dialogList = response.data;
 
@@ -129,6 +131,16 @@ export default {
     }
 
 
+    this.messages = [{ id: 1, content: "正在挂载模型,请稍等......", isAi: true }]
+    //请求挂载模型
+    const reload_response = await request.post("/reload",{content: "qa"})
+    console.log( "reload")
+    console.log( reload_response)
+
+    this.messages = [{ id: 1, content: "你好！我是AI助手，有什么可以帮您的？", isAi: true }]
+    this.messageId = 2
+
+
 
   },
 
@@ -139,6 +151,31 @@ export default {
       const now = new Date();
       return `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
     },
+
+
+    async cleanMessage() {
+
+      const username = localStorage.getItem("username"); // 或从其他地方获取
+
+
+        const response = await request.delete(`/history/delete/${username}`);
+        console.log( response)
+        if(response.code === 200) {
+          this.messages = [{ id: 1, content: "你好！我是AI助手，有什么可以帮您的？", isAi: true }]
+          this.messageId = 2
+          this.$message.success("清除成功")
+
+        }else {
+          this.$message.error("清除失败")
+        }
+
+
+
+
+
+    },
+
+
     
     async sendMessage() {
       if (!this.userInput.trim() || this.isSending) return;
@@ -348,7 +385,7 @@ export default {
 
 .user-message .message-bubble {
   background: linear-gradient(135deg, var(--user-color) 0%, #00cec9 100%);
-  color: white;
+  color: #282727;
   border-radius: var(--border-radius) 0 var(--border-radius) var(--border-radius);
   margin-right: 10px;
 }
@@ -479,12 +516,37 @@ export default {
   box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
 }
 
+.clean-button{
+  width: 100px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+}
+
 .send-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(108, 92, 231, 0.4);
+}
+.clean-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(108, 92, 231, 0.4);
 }
 
 .send-button:disabled {
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.clean-button:disabled {
   opacity: 0.7;
   transform: none;
   box-shadow: none;

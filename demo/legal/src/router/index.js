@@ -18,19 +18,23 @@ const wenda = () => import('@/views/wenda/wenda')
 const history = () => import('@/views/wenda/history')
 const history1 = () => import('@/views/wenshu/history1')
 const souc = () => import('@/views/souc/souc')
-const zhuc = () => import('@/views/register/register')
+const register = () => import('@/views/register/register')
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
+    redirect: '/login'  // 默认根路径重定向到 /login
+  },
+  {
+    path: '/login',
     component: Login
   },
   {
     name: '19',
-    path: '/zhuc',
-    component: zhuc
+    path: '/register',
+    component: register
   },
   {
     path: '/home',

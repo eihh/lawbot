@@ -442,7 +442,7 @@
   
   .message.user .message-text {
     background-color: #409eff;
-    color: white;
+    color: #000000;
   }
   
   .message.user .message-content {
