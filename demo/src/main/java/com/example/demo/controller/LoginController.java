@@ -49,12 +49,5 @@ public class LoginController {
 
         return Result.success(userVO);
 
-//        User user = loginService.login(username, password);
-//        if (user != null) {
-//            return Result.success("登录成功");
-//        }
-//        else {
-//            return Result.error("登录失败");
-//        }
     }
 }

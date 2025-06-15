@@ -96,7 +96,6 @@
     methods: {
 
 
-
       async handleSubmit() {
         if (this.form.password !== this.form.confirmPassword) {
           this.$message({type:'error', message: '两次输入的密码不匹配'});
@@ -108,16 +107,11 @@
         this.isSubmitting = true
         
         try {
-          // 这里替换为实际的注册API调用
-
-
           const response = await request.post("/register", {
             username: this.form.username,
             password: this.form.password
           });
-
           console.log(response);
-
 
           // 模拟API延迟
           await new Promise(resolve => setTimeout(resolve, 1500))
@@ -133,10 +127,6 @@
           if (response.code === 500) {
             this.$message({type:'error', message: response.msg});
           }
-
-
-
-
 
         } catch (error) {
           console.error('注册失败:', error)

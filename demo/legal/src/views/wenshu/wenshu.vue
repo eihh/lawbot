@@ -326,8 +326,8 @@ export default {
           sender: "ai",
           type: "text",
           title: filename,
-          content: `<strong>文书摘要：</strong><br/>${formattedSummary(response.msg)}`,
-          //content: `<strong>文书摘要：</strong><br/>${response.msg}`,
+          //content: `<strong>文书摘要：</strong><br/>${formattedSummary(response.msg)}`,
+          content: `<strong>文书摘要：</strong><br/>${response.msg}`,
           isFavorite: false,
         });
 

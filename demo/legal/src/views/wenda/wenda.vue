@@ -82,7 +82,7 @@ export default {
 
       isSending: false,
       messages: [
-        { id: 1, content: "你好！我是AI助手，有什么可以帮您的？", isAi: true },
+
       ],
       dialogList: [
         {
@@ -98,15 +98,19 @@ export default {
 
 
   async created() {
+
     const username = localStorage.getItem("username");
     const response = await request.get(`/history/list/${username}/20`);
     console.log(response);
+
+
     this.dialogList = response.data;
+
 
     for (let i = 0; i < this.dialogList.length; i++) {
       let a = this.dialogList[i];
 
-      if (a.role === 0){
+      if (a.role === 0) {
         console.log("0")
         const aiResponse = {
           id: this.messageId++,
@@ -116,7 +120,7 @@ export default {
         this.messages.push(aiResponse);
 
       }
-      if (a.role === 1){
+      if (a.role === 1) {
         console.log("1")
         const userMessage = {
           id: this.messageId++,
@@ -126,19 +130,43 @@ export default {
         this.messages.push(userMessage);
       }
 
-
       console.log(this.dialogList[i].role, this.dialogList[i].content);
+
+
+
+    }
+
+    if(response.code === 200){
+      this.messages.push({ id: this.messageId++, content: "正在挂载模型,请稍等......", isAi: true })
     }
 
 
-    this.messages = [{ id: 1, content: "正在挂载模型,请稍等......", isAi: true }]
+
+
+
+  },
+
+  async mounted() {
+
+
+
+
     //请求挂载模型
     const reload_response = await request.post("/reload",{content: "qa"})
     console.log( "reload")
     console.log( reload_response)
 
-    this.messages = [{ id: 1, content: "你好！我是AI助手，有什么可以帮您的？", isAi: true }]
-    this.messageId = 2
+    if(reload_response.code === 200){
+
+
+      this.messages.pop()
+      this.messages.push({ id: this.messageId++, content: "你好！我是AI助手，有什么可以帮您的？", isAi: true })
+    }
+
+
+
+
+
 
 
 

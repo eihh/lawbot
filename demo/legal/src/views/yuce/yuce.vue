@@ -132,9 +132,12 @@
 import request from "@/axios/request";
 import jsPDF from "jspdf";
 import VueMarkdown from "vue-markdown";
+import html2canvas from "html2canvas";
 
 export default {
   name: "AbA",
+
+
   components: {
     // eslint-disable-next-line vue/no-unused-components
     'vue-markdown': VueMarkdown
@@ -216,23 +219,7 @@ export default {
       };
 
       try {
-
-        // this.history.push( {
-        //   question: this.inputQuestion,
-        //   time: new Date().toLocaleTimeString(),
-        //   answer: "123456inputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestioninputQuestion",
-        //   keywords: [],
-        //   timestamp: "",
-        // });
-
-
-
-
-
         // 向后端发送请求
-
-
-
         const response = await request.post("/yuce/send", this.inputQuestion);
         console.log(response);
 
@@ -258,51 +245,54 @@ export default {
       }
     },
 
-    exportSingleAnswer(item) {
-      const doc = new jsPDF();
+    async exportSingleAnswer(item) {
 
-      doc.setFont("msyh"); // 微软雅黑或其他支持中文的字体
+      // 创建一个隐藏容器渲染 HTML
+      const container = document.createElement('div');
+      container.style.position = 'fixed';
+      container.style.left = '-9999px';
+      container.style.width = '800px';  // 宽度尽量大一点，提升分辨率
+      container.style.fontFamily = '宋体, SimSun, serif';
+      container.innerHTML = item.answer;
+      document.body.appendChild(container);
 
-      // 设置文档样式
-      doc.setFontSize(18);
-      doc.setTextColor(59, 130, 246);
-      doc.text("AI问答报告", 20, 20);
+      // 转换为高分辨率 canvas
+      const canvas = await html2canvas(container, {scale: 2});
+      const imgData = canvas.toDataURL('image/png');
 
-      // 问题部分
-      doc.setFontSize(12);
-      doc.setTextColor(100);
-      doc.text("问题：", 20, 35);
-      doc.setFontSize(14);
-      doc.setTextColor(0);
-      doc.text(item.question, 40, 35);
+      // A4 纸尺寸（单位 pt）
+      const pdf = new jsPDF('p', 'pt', 'a4');
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const pageWidth = pdf.internal.pageSize.getWidth();
 
-      // 回答内容
-      doc.setFontSize(12);
-      doc.setTextColor(100);
-      doc.text("回答：", 20, 50);
-      doc.setFontSize(14);
-      doc.setTextColor(0);
-      const splitText = doc.splitTextToSize(item.answer, 160);
-      doc.text(splitText, 40, 50);
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-      // 添加装饰线
-      doc.setDrawColor(200);
-      doc.setLineWidth(0.5);
-      doc.line(20, 25, 60, 25);
+      let heightLeft = imgHeight;
+      let position = 0;
 
-      // 元信息
-      doc.setFontSize(10);
-      doc.setTextColor(100);
-      doc.text(`生成时间：${item.timestamp}`, 20, 140);
-      if (item.keywords && item.keywords.length) {
-        doc.text(`关键词：${item.keywords.join(", ")}`, 20, 145);
+      // 多页处理
+      while (heightLeft > 0) {
+        pdf.addImage(
+            imgData,
+            'PNG',
+            0,
+            position,
+            imgWidth,
+            imgHeight
+        );
+        heightLeft -= pageHeight;
+
+        if (heightLeft > 0) {
+          pdf.addPage();
+          position -= pageHeight;
+        }
       }
 
-      // 添加页脚
-      doc.setFontSize(8);
-      doc.text("AI问答系统生成", 180, 290, null, null, "right");
+      pdf.save('法律预测.pdf');
+      document.body.removeChild(container);
 
-      doc.save(`AI问答报告_${new Date().getTime()}.pdf`);
+
     },
 
     // 处理文件上传成功的事件

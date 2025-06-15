@@ -19,7 +19,7 @@
         :key="item.id"
         class="bg-white rounded-xl border border-gray-200 shadow-md p-6 mb-6 transform transition-all duration-300 hover:shadow-xl hover:border-blue-300 hover:-translate-y-1"
         style="margin-top: 30px; padding: 10px; cursor: pointer; border-top: 3px solid #282727;border-bottom: 3px solid #282727; border-left: 3px solid #282727; "
-        @click="showDetail(item)"
+
 
 
       >
@@ -81,7 +81,7 @@
           </p>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="printToPDF" type="primary">
+          <el-button @click="printToPDF(currentItem)" type="primary">
             <i class="fa fa-file-pdf-o mr-2"></i>打印为PDF
           </el-button>
           <el-button @click="closeModal">关闭</el-button>
@@ -94,6 +94,8 @@
   <script>
 import request from "@/axios/request";
 import VueMarkdown from "vue-markdown";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 export default {
   name: "GGGhhhHH",
@@ -103,17 +105,13 @@ export default {
   data() {
     return {
       items: [
-        {
-          id: 1,
-          title: "JavaScript异步编程",
-          content:
-            "JavaScript的Vue.js提供了强大的列表渲染能力，通过v-for指令可以轻松地将数组数据渲染为DOM元素列表。在处理大型列表时，有许多优化技巧可以提高性能。例如，使用key属性来帮助Vue识别哪些元素发生了变化，从而最小化DOM操作。此外，还可以结合虚拟滚动技术来处理极大数量的数据列表，避免一次性渲染过多元素导致的性能问题。异步特性是其强大之处之一，但也常常是开发者困惑的来源。Promise、async/await等特性使得异步代码更加清晰易读。理解事件循环机制对于掌握JavaScript异步编程至关重要。当处理多个异步操作时，我们可以使用Promise.all来并行执行多个Promise，或者使用Promise.race来处理竞争条件。合理使用这些技术可以大大提高应用程序的性能和用户体验。",
-        },
 
       ],
       displayCount: 10,
       showModal: false,
       currentItem: null,
+      temId:2,
+
     };
   },
 
@@ -123,7 +121,18 @@ export default {
       params: {username: username}
     });
     console.log(response)
-    this.items = response.data;
+    let data = response.data
+    for (let i = 0; i < data.length; i++) {
+
+      this.items.push({
+        id:this.temId++,
+        title: data[i].title,
+        content: data[i].content
+      })
+
+    }
+
+
 
   },
 
@@ -136,18 +145,20 @@ export default {
   methods: {
     async handleDelete(item) {
 
+
       const response = await request.delete("/collection/delete", {
         params: {title: item.title, username: localStorage.getItem("username"),}
       })
 
       console.log(response)
 
-      let username = localStorage.getItem("username")
-      const response2 = await request.get("/collection/list", {
-        params: {username: username}
-      });
-      console.log(response2)
-      this.items = response.data;
+      location.reload();
+
+
+
+
+
+
 
 
 
@@ -167,8 +178,55 @@ export default {
     loadMore() {
       this.displayCount = Math.min(this.displayCount + 3, this.items.length);
     },
-    printToPDF() {
+    async printToPDF(message) {
       // 创建一个新的窗口或iframe来打印
+
+      // 创建一个隐藏容器渲染 HTML
+      const container = document.createElement('div');
+      container.style.position = 'fixed';
+      container.style.left = '-9999px';
+      container.style.width = '800px';  // 宽度尽量大一点，提升分辨率
+      container.style.fontFamily = '宋体, SimSun, serif';
+      container.innerHTML = message.content;
+      document.body.appendChild(container);
+
+      // 转换为高分辨率 canvas
+      const canvas = await html2canvas(container, {scale: 2});
+      const imgData = canvas.toDataURL('image/png');
+
+      // A4 纸尺寸（单位 pt）
+      const pdf = new jsPDF('p', 'pt', 'a4');
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      // 多页处理
+      while (heightLeft > 0) {
+        pdf.addImage(
+            imgData,
+            'PNG',
+            0,
+            position,
+            imgWidth,
+            imgHeight
+        );
+        heightLeft -= pageHeight;
+
+        if (heightLeft > 0) {
+          pdf.addPage();
+          position -= pageHeight;
+        }
+      }
+
+      pdf.save('文书摘要.pdf');
+      document.body.removeChild(container);
+
+
     },
   },
 };
